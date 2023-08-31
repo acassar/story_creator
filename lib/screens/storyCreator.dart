@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:story_creator/components/storyNode.dart';
 import 'package:story_creator/models/edge.dart';
 import 'package:story_creator/models/story.dart';
 import 'package:story_creator/models/storyItem.dart';
+import 'package:story_creator/services/nodeService.dart';
 import 'package:story_creator/services/storyService.dart';
 import 'package:uuid/uuid.dart';
 
@@ -20,9 +22,6 @@ class _StoryCreatorState extends State<StoryCreator> {
   Story? example;
   final Graph graph = Graph()..isTree = true;
   SugiyamaConfiguration builder = SugiyamaConfiguration();
-  StoryItem? selectedNode;
-  StoryItem? linkToSelection;
-  bool isLinkingTo = false;
   TextEditingController textController = TextEditingController();
   TextEditingController choiceTextController = TextEditingController();
 
@@ -47,44 +46,38 @@ class _StoryCreatorState extends State<StoryCreator> {
   }
 
   nodeClickCallback(StoryItem item) {
-    setState(() {
-      item == selectedNode ? selectedNode = null : selectedNode = item;
-    });
+    // setState(() {});
+    Provider.of<NodeService>(context, listen: false).selectNode(item);
   }
 
   createNode() {
     String id = const Uuid().v4();
+    NodeService nodeService = Provider.of<NodeService>(context, listen: false);
     setState(() {
       example!.items.add(StoryItem(id, textController.text,
           choiceText: choiceTextController.text));
-      example!.edges.add(StoryEdge(selectedNode!.id, id));
-      graph.addEdge(Node.Id(selectedNode!.id), Node.Id(id));
-      selectedNode = null;
+      example!.edges.add(StoryEdge(nodeService.selectedNode!.id, id));
+      graph.addEdge(Node.Id(nodeService.selectedNode!.id), Node.Id(id));
+      nodeService.selectNode(null);
     });
   }
 
   setLinkToSelection(StoryItem item) {
-    if (isLinkingTo && item != selectedNode) {
-      setState(() {
-        linkToSelection = item;
-      });
-    }
+    NodeService nodeService = Provider.of<NodeService>(context, listen: false);
+    nodeService.selectLinkTo(item);
+  }
+
+  addLink() {
+    NodeService nodeService = Provider.of<NodeService>(context, listen: false);
+    example!.edges
+        .add(StoryEdge(nodeService.selectedNode!.id, nodeService.linkToSelection!.id));
+    graph.addEdge(
+        Node.Id(nodeService.selectedNode!.id), Node.Id(nodeService.linkToSelection!.id));
   }
 
   swicthLinkTo() {
-    if (isLinkingTo && linkToSelection != null) {
-      example!.edges.add(StoryEdge(selectedNode!.id, linkToSelection!.id));
-      graph.addEdge(Node.Id(selectedNode!.id), Node.Id(linkToSelection!.id));
-      setState(() {
-        linkToSelection = null;
-        selectedNode = null;
-        isLinkingTo = false;
-      });
-    } else {
-      setState(() {
-        isLinkingTo = true;
-      });
-    }
+    NodeService nodeService = Provider.of<NodeService>(context, listen: false);
+    nodeService.linkToButtonClicked(addLink);    
   }
 
   @override
@@ -99,59 +92,69 @@ class _StoryCreatorState extends State<StoryCreator> {
             padding: const EdgeInsets.all(10),
             child: Column(
               children: [
-                Text("choice to: ${selectedNode?.id}"),
-                Row(
-                  children: [
-                    Column(
-                      children: [
-                        const Text("text"),
-                        Container(
-                          width: 400,
-                          margin: const EdgeInsets.all(5),
-                          color: Colors.black26,
-                          child: TextField(
-                            controller: textController,
-                            maxLines: 3,
+                Consumer<NodeService>(builder: (context, nodeService, child) {
+                  return Text("choice to: ${nodeService.selectedNode?.id ?? "nothing"}");
+                }),
+                Consumer<NodeService>(builder: (context, nodeService, child) {
+                  return Row(
+                    children: [
+                      Column(
+                        children: [
+                          const Text("text"),
+                          Container(
+                            width: 400,
+                            margin: const EdgeInsets.all(5),
+                            color: Colors.black26,
+                            child: TextField(
+                              controller: textController,
+                              maxLines: 3,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        const Text("choice text"),
-                        Container(
-                          width: 400,
-                          margin: const EdgeInsets.all(5),
-                          color: Colors.black26,
-                          child: TextField(
-                            controller: choiceTextController,
-                            maxLines: 3,
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          const Text("choice text"),
+                          Container(
+                            width: 400,
+                            margin: const EdgeInsets.all(5),
+                            color: Colors.black26,
+                            child: TextField(
+                              controller: choiceTextController,
+                              maxLines: 3,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    MaterialButton(
-                      onPressed: selectedNode != null ? createNode : null,
-                      child: Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: const BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10))),
-                          child: const Text("submit")),
-                    ),
-                    MaterialButton(
-                      onPressed: selectedNode != null ? swicthLinkTo : null,
-                      child: Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: const BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10))),
-                          child: Text(isLinkingTo ? "submit link" : "link to")),
-                    ),
-                  ],
-                )
+                        ],
+                      ),
+                      MaterialButton(
+                        onPressed: nodeService.selectedNode != null
+                            ? createNode
+                            : null,
+                        child: Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: const BoxDecoration(
+                                color: Colors.blue,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10))),
+                            child: const Text("submit")),
+                      ),
+                      MaterialButton(
+                        onPressed: nodeService.selectedNode != null
+                            ? swicthLinkTo
+                            : null,
+                        child: Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                                color: nodeService.isLinkingTo ? Colors.amber :Colors.blue,
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(10))),
+                            child: Text(nodeService.isLinkingTo
+                                ? "submit link"
+                                : "link to")),
+                      ),
+                    ],
+                  );
+                })
               ],
             ),
           ),
@@ -163,25 +166,29 @@ class _StoryCreatorState extends State<StoryCreator> {
                 maxScale: 5.6,
                 child: Column(
                   children: [
-                    GraphView(
-                      graph: graph,
-                      algorithm: SugiyamaAlgorithm(builder),
-                      paint: Paint()
-                        ..color = Colors.green
-                        ..strokeWidth = 1
-                        ..style = PaintingStyle.stroke,
-                      builder: (Node node) {
-                        // I can decide what widget should be shown here based on the id
-                        var id = node.key!.value;
-                        return StoryNode(
-                          item: findNode(id),
-                          callack: nodeClickCallback,
-                          key: Key(id),
-                          selected: selectedNode?.id == id ||
-                              linkToSelection?.id == id,
-                          singleClick: setLinkToSelection,
+                    Consumer<NodeService>(
+                      builder: (context, nodeService, child) {
+                        return GraphView(
+                          graph: graph,
+                          algorithm: SugiyamaAlgorithm(builder),
+                          paint: Paint()
+                            ..color = Colors.green
+                            ..strokeWidth = 1
+                            ..style = PaintingStyle.stroke,
+                          builder: (Node node) {
+                            // I can decide what widget should be shown here based on the id
+                            var id = node.key!.value;
+                            return StoryNode(
+                              item: findNode(id),
+                              callack: nodeClickCallback,
+                              key: Key(id),
+                              selected: nodeService.selectedNode?.id == id,
+                              linkToSelected: nodeService.linkToSelection?.id == id,
+                              singleClick: setLinkToSelection,
+                            );
+                          },
                         );
-                      },
+                      }
                     ),
                   ],
                 )),

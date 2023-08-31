@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:story_creator/screens/storyCreator.dart';
+import 'package:story_creator/services/nodeService.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      child: const MyApp(),
+      create: (context) => NodeService(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -40,8 +47,9 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: StoryCreator(key: UniqueKey(),)
-      ),
+          child: StoryCreator(
+        key: UniqueKey(),
+      )),
     );
   }
 }
