@@ -6,13 +6,12 @@ class StoryItem {
   List<String>? moreText;
   String? choiceText;
   EndType? end;
-  List<StoryItem>? children;
-  String? teleportToId;
 
-  StoryItem(this.id, this.text,
-      {this.choiceText,
-      this.children,
-      this.end,
-      this.moreText,
-      this.teleportToId});
+  StoryItem(
+    this.id,
+    this.text, {
+    this.choiceText,
+    this.end,
+    this.moreText,
+  });
 }
