@@ -21,6 +21,8 @@ class _StoryCreatorState extends State<StoryCreator> {
   final Graph graph = Graph()..isTree = true;
   SugiyamaConfiguration builder = SugiyamaConfiguration();
   StoryItem? selectedNode;
+  StoryItem? linkToSelection;
+  bool isLinkingTo = false;
   TextEditingController textController = TextEditingController();
   TextEditingController choiceTextController = TextEditingController();
 
@@ -46,18 +48,43 @@ class _StoryCreatorState extends State<StoryCreator> {
 
   nodeClickCallback(StoryItem item) {
     setState(() {
-      selectedNode = item;
+      item == selectedNode ? selectedNode = null : selectedNode = item;
     });
   }
 
   createNode() {
-    String id = Uuid().v4();
+    String id = const Uuid().v4();
     setState(() {
-      example!.items.add(StoryItem(id, textController.text, choiceText: choiceTextController.text));
+      example!.items.add(StoryItem(id, textController.text,
+          choiceText: choiceTextController.text));
       example!.edges.add(StoryEdge(selectedNode!.id, id));
       graph.addEdge(Node.Id(selectedNode!.id), Node.Id(id));
       selectedNode = null;
     });
+  }
+
+  setLinkToSelection(StoryItem item) {
+    if (isLinkingTo && item != selectedNode) {
+      setState(() {
+        linkToSelection = item;
+      });
+    }
+  }
+
+  swicthLinkTo() {
+    if (isLinkingTo && linkToSelection != null) {
+      example!.edges.add(StoryEdge(selectedNode!.id, linkToSelection!.id));
+      graph.addEdge(Node.Id(selectedNode!.id), Node.Id(linkToSelection!.id));
+      setState(() {
+        linkToSelection = null;
+        selectedNode = null;
+        isLinkingTo = false;
+      });
+    } else {
+      setState(() {
+        isLinkingTo = true;
+      });
+    }
   }
 
   @override
@@ -104,16 +131,25 @@ class _StoryCreatorState extends State<StoryCreator> {
                       ],
                     ),
                     MaterialButton(
-                         onPressed: selectedNode != null ? createNode : null,
-                          child: Container(
-                            padding: const EdgeInsets.all(5),
-                            decoration: const BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            child: const Text("submit")
-                          ),
-                        )
+                      onPressed: selectedNode != null ? createNode : null,
+                      child: Container(
+                          padding: const EdgeInsets.all(5),
+                          decoration: const BoxDecoration(
+                              color: Colors.blue,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                          child: const Text("submit")),
+                    ),
+                    MaterialButton(
+                      onPressed: selectedNode != null ? swicthLinkTo : null,
+                      child: Container(
+                          padding: const EdgeInsets.all(5),
+                          decoration: const BoxDecoration(
+                              color: Colors.blue,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                          child: Text(isLinkingTo ? "submit link" : "link to")),
+                    ),
                   ],
                 )
               ],
@@ -129,8 +165,7 @@ class _StoryCreatorState extends State<StoryCreator> {
                   children: [
                     GraphView(
                       graph: graph,
-                      algorithm: SugiyamaAlgorithm(
-                          builder),
+                      algorithm: SugiyamaAlgorithm(builder),
                       paint: Paint()
                         ..color = Colors.green
                         ..strokeWidth = 1
@@ -142,6 +177,9 @@ class _StoryCreatorState extends State<StoryCreator> {
                           item: findNode(id),
                           callack: nodeClickCallback,
                           key: Key(id),
+                          selected: selectedNode?.id == id ||
+                              linkToSelection?.id == id,
+                          singleClick: setLinkToSelection,
                         );
                       },
                     ),
