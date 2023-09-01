@@ -5,13 +5,24 @@ class NodeService extends ChangeNotifier {
   StoryItem? selectedNode;
   StoryItem? linkToSelection;
   bool isLinkingTo = false;
+  bool isRemovingEdge = false;
 
   selectNode(StoryItem? item) {
-    if(item == selectedNode) {
+    if (item == selectedNode) {
       item = null;
     }
     clear();
     selectedNode = item;
+    notifyListeners();
+  }
+
+  activateRemoveEdge() {
+    isRemovingEdge = true;
+    notifyListeners();
+  }
+
+  deactivateRemoveEdge() {
+    isRemovingEdge = false;
     notifyListeners();
   }
 
@@ -29,18 +40,19 @@ class NodeService extends ChangeNotifier {
     if (item == linkToSelection) {
       linkToSelection = null;
       deactivateLinkTo();
+      deactivateRemoveEdge();
     }
-    if (isLinkingTo && item != selectedNode) {
+    if ((isLinkingTo || isRemovingEdge) && item != selectedNode) {
       linkToSelection = item;
-      activateLinkTo();
+      notifyListeners();
     }
   }
 
   clear() {
     linkToSelection = null;
     selectedNode = null;
-    isLinkingTo = false;
-    notifyListeners();
+    deactivateLinkTo();
+    deactivateRemoveEdge();
   }
 
   void linkToButtonClicked(callBack) {
@@ -49,6 +61,15 @@ class NodeService extends ChangeNotifier {
       clear();
     } else {
       activateLinkTo();
+    }
+  }
+
+  void removeEdgeButtonClicked(callBack) {
+    if (isRemovingEdge && linkToSelection != null) {
+      callBack();
+      clear();
+    } else {
+      activateRemoveEdge();
     }
   }
 }

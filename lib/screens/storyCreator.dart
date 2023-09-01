@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:story_creator/components/storyNode.dart';
@@ -67,6 +69,30 @@ class _StoryCreatorState extends State<StoryCreator> {
     nodeService.selectLinkTo(item);
   }
 
+  List<StoryEdge> getLinkedNodeEdges() {
+    NodeService nodeService = Provider.of<NodeService>(context, listen: false);
+    StoryItem linked = nodeService.linkToSelection!;
+    return example!.edges.where((element) => element.to == linked.id).toList();
+  }
+
+  removeLink() {
+    NodeService nodeService = Provider.of<NodeService>(context, listen: false);
+    List<StoryEdge> edges = getLinkedNodeEdges();
+    if(edges.isNotEmpty)
+    {
+      setState(() {
+        example!.edges.remove(edges.firstWhere((element) => element.from == nodeService.selectedNode!.id)); //removing wanted edge
+        Node fromNode = graph.getNodeUsingId(nodeService.selectedNode!.id);
+        Node toNode = graph.getNodeUsingId(nodeService.linkToSelection!.id);
+        Edge? edge = graph.getEdgeBetween(fromNode, toNode);
+        graph.removeEdge(edge!);
+      });
+    }
+    else {
+      stdout.write("must have at least one active edge");
+    }
+  }
+
   addLink() {
     NodeService nodeService = Provider.of<NodeService>(context, listen: false);
     example!.edges
@@ -78,6 +104,11 @@ class _StoryCreatorState extends State<StoryCreator> {
   swicthLinkTo() {
     NodeService nodeService = Provider.of<NodeService>(context, listen: false);
     nodeService.linkToButtonClicked(addLink);    
+  }
+
+  switchRemovingEdge() {
+    NodeService nodeService = Provider.of<NodeService>(context, listen: false);
+    nodeService.removeEdgeButtonClicked(removeLink);    
   }
 
   @override
@@ -151,6 +182,20 @@ class _StoryCreatorState extends State<StoryCreator> {
                             child: Text(nodeService.isLinkingTo
                                 ? "submit link"
                                 : "link to")),
+                      ),
+                      MaterialButton(
+                        onPressed: nodeService.selectedNode != null
+                            ? switchRemovingEdge
+                            : null,
+                        child: Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                                color: nodeService.isRemovingEdge ? Colors.amber :Colors.blue,
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(10))),
+                            child: Text(nodeService.isRemovingEdge
+                                ? "submit remove edge"
+                                : "Remove edge")),
                       ),
                     ],
                   );
