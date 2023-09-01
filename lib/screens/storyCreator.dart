@@ -22,12 +22,12 @@ class StoryCreator extends StatefulWidget {
 class _StoryCreatorState extends State<StoryCreator> {
   StoryService storyService = StoryService();
   //TODO: keep only the graph as truth source and remove any modification on the story at every step, but at the end
-  Story? example; 
+  Story? example;
   final Graph graph = Graph()..isTree = true;
   SugiyamaConfiguration builder = SugiyamaConfiguration();
   TextEditingController textController = TextEditingController();
   TextEditingController choiceTextController = TextEditingController();
-  String error = "";
+  List<String> error = [];
 
   @override
   void initState() {
@@ -89,11 +89,15 @@ class _StoryCreatorState extends State<StoryCreator> {
 
   addError(String error) async {
     setState(() {
-      this.error += "\n $error";
+      this.error.add(error);
     });
-    await Future.delayed(const Duration(seconds: 20));
+    await Future.delayed(const Duration(seconds: 10));
     setState(() {
-      this.error = "";
+      if (this.error.length == 1) {
+        this.error.clear();
+      } else {
+        this.error = this.error.sublist(1);
+      }
     });
   }
 
@@ -148,8 +152,11 @@ class _StoryCreatorState extends State<StoryCreator> {
       addError("Make sure there is no child to that node before removing it");
     } else {
       graph.removeNode(graph.getNodeUsingId(selectedNodeID));
-      example!.items.removeWhere((element) => element.id == selectedNodeID); // removing this node
-      example!.edges.removeWhere((element) => element.to == selectedNodeID); //removing all edges that have this node as destination
+      example!.items.removeWhere(
+          (element) => element.id == selectedNodeID); // removing this node
+      example!.edges.removeWhere((element) =>
+          element.to ==
+          selectedNodeID); //removing all edges that have this node as destination
       nodeService.clear();
     }
   }
@@ -167,7 +174,7 @@ class _StoryCreatorState extends State<StoryCreator> {
             child: Column(
               children: [
                 Text(
-                  error,
+                  error.join("\n"),
                   style: const TextStyle(color: Colors.red),
                 ),
                 Consumer<NodeService>(builder: (context, nodeService, child) {
@@ -256,11 +263,9 @@ class _StoryCreatorState extends State<StoryCreator> {
                             : null,
                         child: Container(
                             padding: const EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                                color: nodeService.isRemovingEdge
-                                    ? Colors.amber
-                                    : Colors.red,
-                                borderRadius: const BorderRadius.all(
+                            decoration: const BoxDecoration(
+                                color:  Colors.red,
+                                borderRadius: BorderRadius.all(
                                     Radius.circular(10))),
                             child: Text(nodeService.isRemovingEdge
                                 ? "submit remove"
