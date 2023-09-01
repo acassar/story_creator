@@ -11,7 +11,8 @@ class Story {
   List<StoryEdge> edges = [];
 
   Story(this.title, Map<String, dynamic> _data) {
-    entryPoint = StoryItem(_data["nodes"][0]["id"], _data["nodes"][0]["text"]);
+    var firstNode = _data["nodes"][0];
+    entryPoint = StoryItem(firstNode["id"], firstNode["text"], choiceText: firstNode["choice_text"], end: StoryItem.stringToEndType(firstNode["end"]), moreText: convertToListString(firstNode["more_text"]));
     for (var item in _data["nodes"]) {
       items.add(convertToStoryItem(item));
     }
@@ -20,7 +21,7 @@ class Story {
     }
   }
 
-  List<String> addMoreText(List<dynamic> data) {
+  List<String> convertToListString(List<dynamic> data) {
     List<String> texts = [];
     for (dynamic text in data) {
       texts.add(text.toString());
@@ -29,16 +30,7 @@ class Story {
   }
 
   EndType addEnd(dynamic end) {
-    switch (end) {
-      case "bad":
-        return EndType.bad;
-      case "good":
-        return EndType.good;
-      case "not":
-        return EndType.not;
-      default:
-        throw ErrorDescription("End type not recognised");
-    }
+    return StoryItem.stringToEndType(end);
   }
 
   StoryItem convertToStoryItem(Map<String, dynamic> data) {
@@ -46,12 +38,9 @@ class Story {
       data["id"],
       data["text"],
       choiceText: data["choice_text"],
+      end: addEnd(data["end"]),
+      moreText: convertToListString(data["more_text"])
     );
-    if(data["end"] != null) item.end = addEnd(data["end"]);
-    if (data["more_text"] != null) {
-      List<dynamic> moreTextRaw = data["more_text"];
-      item.moreText = addMoreText(moreTextRaw);
-    }
     return item;
   }
 }

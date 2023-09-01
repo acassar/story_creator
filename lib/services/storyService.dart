@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/services.dart';
 import 'package:story_creator/models/story.dart';
 
 class StoryService {
@@ -11,7 +10,10 @@ class StoryService {
   "nodes": [
     {
       "id": "start",
-      "text": "Story start"
+      "text": "Story start",
+      "more_text": [],
+      "end": "not",
+      "choice_text": ""
     }
   ],
   "edges": [

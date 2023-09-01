@@ -1,0 +1,29 @@
+{
+  "nodes": [
+      {
+    "id": "start",
+    "text": "Story start",
+    "choice_text": "",
+    "end": "not",
+    "more_text": []
+  }
+,  {
+    "id": "0266f023-e682-43a1-9741-a6f7e4105ea6",
+    "text": "test",
+    "choice_text": "test",
+    "end": "not",
+    "more_text": [
+"1",
+"2"
+]
+  }
+
+  ],
+  "edges": [
+      {
+    "from": "start",
+    "to": "0266f023-e682-43a1-9741-a6f7e4105ea6"
+  }
+
+  ]
+}
