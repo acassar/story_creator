@@ -21,7 +21,8 @@ class StoryCreator extends StatefulWidget {
 
 class _StoryCreatorState extends State<StoryCreator> {
   StoryService storyService = StoryService();
-  Story? example;
+  //TODO: keep only the graph as truth source and remove any modification on the story at every step, but at the end
+  Story? example; 
   final Graph graph = Graph()..isTree = true;
   SugiyamaConfiguration builder = SugiyamaConfiguration();
   TextEditingController textController = TextEditingController();
