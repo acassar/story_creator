@@ -15,13 +15,24 @@ class StoryItem {
     this.moreText,
   });
 
-  static createFromForm({required String id, required String text, required String choiceText, String? end}) {
-    List<String> moreText = text.split("\n");
-    return StoryItem(id, moreText[0], choiceText: choiceText, moreText: moreText.sublist(1));
+  static createFromForm(
+      {required String id,
+      required String text,
+      required String choiceText,
+      String? end}) {
+    List<String> formatedText = text.split("\n");
+    List<String> moreText = formatedText.sublist(1);
+    moreText.removeWhere(
+      (element) => element == "",
+    );
+    return StoryItem(id, formatedText[0],
+        choiceText: choiceText, moreText: moreText.isEmpty ? null : moreText);
   }
 
   _getMoreTextString() {
-    String s = moreText != null ? "\n -${moreText?.map((e) => "$e").join("\n- ")}" : "none";
+    String s = moreText != null
+        ? "\n -${moreText?.map((e) => "$e").join("\n- ")}"
+        : "none";
     return s;
   }
 
