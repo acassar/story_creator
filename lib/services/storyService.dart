@@ -1,24 +1,40 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:story_creator/models/story.dart';
 
 class StoryService {
-  Future<Story> loadGraphStory() async {
-    Map<String, dynamic> storyMap = await _readFile("example", "graphExample");
-    Story example = Story("example", storyMap);
-    return example;
+  String defaultFileContent = """
+{
+  "nodes": [
+    {
+      "id": "start",
+      "text": "Story start"
+    }
+  ],
+  "edges": [
+
+  ]
+}
+""";
+
+  Future<Story> loadStory(String name) async {
+    Map<String, dynamic> storyMap = await _readFile("example", name);
+    Story story = Story(name, storyMap);
+    return story;
   }
 
-  Future<Story> loadStory() async {
-    Map<String, dynamic> storyMap = await _readFile("example", "example");
-    Story example = Story("example", storyMap);
-    return example;
-  }
+  Future<Map<String, dynamic>> _readFile(
+      String folderName, String fileName) async {
+    String path = "stories/$folderName/$fileName.json";
 
-  Future<Map<String, dynamic>> _readFile(String folderName, String fileName) async {
-    final String response =
-        await rootBundle.loadString('stories/$folderName/$fileName.json');
+    bool exist = await File(path).exists();
+    File file = File(path);
+    if (!exist) {
+      await file.writeAsString(defaultFileContent);
+    }
+    final String response = await file.readAsString();
     return jsonDecode(response);
   }
 }

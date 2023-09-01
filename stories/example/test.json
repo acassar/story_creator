@@ -1,0 +1,11 @@
+{
+  "nodes": [
+    {
+      "id": "start",
+      "text": "Story start"
+    }
+  ],
+  "edges": [
+
+  ]
+}

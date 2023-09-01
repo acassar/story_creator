@@ -22,11 +22,13 @@ class StoryCreator extends StatefulWidget {
 class _StoryCreatorState extends State<StoryCreator> {
   StoryService storyService = StoryService();
   //TODO: keep only the graph as truth source and remove any modification on the story at every step, but at the end
-  Story? example;
-  final Graph graph = Graph()..isTree = true;
+  Story? story;
+  Graph graph = Graph()..isTree = true;
   SugiyamaConfiguration builder = SugiyamaConfiguration();
   TextEditingController textController = TextEditingController();
   TextEditingController choiceTextController = TextEditingController();
+  TextEditingController fileNameController =
+      TextEditingController(text: "example");
   List<String> error = [];
 
   @override
@@ -36,17 +38,18 @@ class _StoryCreatorState extends State<StoryCreator> {
   }
 
   void loadStory() async {
-    Story s = await storyService.loadGraphStory();
-    setState(() {
-      example = s;
-      s.edges.forEach((element) {
-        graph.addEdge(Node.Id(element.from), Node.Id(element.to));
-      });
+    Story s = await storyService.loadStory(fileNameController.text);
+    story = s;
+    graph = Graph()..isTree = true;
+    graph.addNode(Node.Id(s.items[0].id));
+    s.edges.forEach((element) {
+      graph.addEdge(Node.Id(element.from), Node.Id(element.to));
     });
+    setState(() {});
   }
 
   StoryItem findNode(String id) {
-    return example!.items.firstWhere((element) => element.id == id);
+    return story!.items.firstWhere((element) => element.id == id);
   }
 
   nodeClickCallback(StoryItem item) {
@@ -55,7 +58,7 @@ class _StoryCreatorState extends State<StoryCreator> {
   }
 
   bool isIdExist(String id) {
-    return example!.items.any((element) => element.id == id);
+    return story!.items.any((element) => element.id == id);
   }
 
   createNode() {
@@ -69,8 +72,8 @@ class _StoryCreatorState extends State<StoryCreator> {
         text: textController.text,
         choiceText: choiceTextController.text);
     setState(() {
-      example!.items.add(newItem);
-      example!.edges.add(StoryEdge(nodeService.selectedNode!.id, id));
+      story!.items.add(newItem);
+      story!.edges.add(StoryEdge(nodeService.selectedNode!.id, id));
       graph.addEdge(Node.Id(nodeService.selectedNode!.id), Node.Id(id));
       nodeService.selectNode(null);
     });
@@ -84,7 +87,7 @@ class _StoryCreatorState extends State<StoryCreator> {
   List<StoryEdge> getLinkedNodeEdges() {
     NodeService nodeService = Provider.of<NodeService>(context, listen: false);
     StoryItem linked = nodeService.linkToSelection!;
-    return example!.edges.where((element) => element.to == linked.id).toList();
+    return story!.edges.where((element) => element.to == linked.id).toList();
   }
 
   addError(String error) async {
@@ -113,7 +116,7 @@ class _StoryCreatorState extends State<StoryCreator> {
           addError(
               "Select a correct edge (select first the parent, then the child. Make sure that there also is an active edge)");
         } else {
-          example!.edges.remove(edges.firstWhere((element) =>
+          story!.edges.remove(edges.firstWhere((element) =>
               element.from ==
               nodeService
                   .selectedNode!.id)); //removing wanted edge in the story
@@ -127,7 +130,7 @@ class _StoryCreatorState extends State<StoryCreator> {
 
   addLink() {
     NodeService nodeService = Provider.of<NodeService>(context, listen: false);
-    example!.edges.add(StoryEdge(
+    story!.edges.add(StoryEdge(
         nodeService.selectedNode!.id, nodeService.linkToSelection!.id));
     graph.addEdge(Node.Id(nodeService.selectedNode!.id),
         Node.Id(nodeService.linkToSelection!.id));
@@ -146,15 +149,15 @@ class _StoryCreatorState extends State<StoryCreator> {
   removeNode() {
     NodeService nodeService = Provider.of<NodeService>(context, listen: false);
     String selectedNodeID = nodeService.selectedNode!.id;
-    if (example!.edges.any(
+    if (story!.edges.any(
       (element) => element.from == selectedNodeID,
     )) {
       addError("Make sure there is no child to that node before removing it");
     } else {
       graph.removeNode(graph.getNodeUsingId(selectedNodeID));
-      example!.items.removeWhere(
+      story!.items.removeWhere(
           (element) => element.id == selectedNodeID); // removing this node
-      example!.edges.removeWhere((element) =>
+      story!.edges.removeWhere((element) =>
           element.to ==
           selectedNodeID); //removing all edges that have this node as destination
       nodeService.clear();
@@ -163,7 +166,7 @@ class _StoryCreatorState extends State<StoryCreator> {
 
   @override
   Widget build(BuildContext context) {
-    if (example == null) return const Placeholder();
+    if (story == null) return const Placeholder();
     return Container(
       child: Column(
         children: [
@@ -184,104 +187,136 @@ class _StoryCreatorState extends State<StoryCreator> {
                 Consumer<NodeService>(builder: (context, nodeService, child) {
                   return Row(
                     children: [
-                      Row(
-                        children: [
-                          Column(
-                        children: [
-                          const Text(
-                              "text (press enter to add new text chunks => will be inserted in \"more text\")"),
-                          Container(
-                            width: 400,
-                            margin: const EdgeInsets.all(5),
-                            color: Colors.black26,
-                            child: TextField(
-                              controller: textController,
-                              maxLines: 3,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          const Text("choice text"),
-                          Container(
-                            width: 400,
-                            margin: const EdgeInsets.all(5),
-                            color: Colors.black26,
-                            child: TextField(
-                              controller: choiceTextController,
-                              maxLines: 3,
-                            ),
-                          ),
-                        ],
-                      ),
-                      MaterialButton(
-                        onPressed: nodeService.selectedNode != null
-                            ? createNode
-                            : null,
-                        child: Container(
-                            padding: const EdgeInsets.all(5),
-                            decoration: const BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            child: const Text("submit")),
-                      ),
-                        ],
-                      ),
                       Expanded(
                         child: Wrap(
-                          runSpacing: 10,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          alignment: WrapAlignment.spaceBetween,
                           children: [
-                            MaterialButton(
-                              onPressed: nodeService.selectedNode != null
-                                  ? swicthLinkTo
-                                  : null,
-                              child: Container(
-                                  padding: const EdgeInsets.all(5),
-                                  decoration: BoxDecoration(
-                                      color: nodeService.isLinkingTo
-                                          ? Colors.amber
-                                          : Colors.blue,
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(10))),
-                                  child: Text(nodeService.isLinkingTo
-                                      ? "submit link"
-                                      : "link to")),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Column(
+                                  children: [
+                                    const Text(
+                                        "text (press enter to add new text chunks => will be inserted in \"more text\")"),
+                                    Container(
+                                      width: 400,
+                                      margin: const EdgeInsets.all(5),
+                                      color: Colors.black26,
+                                      child: TextField(
+                                        controller: textController,
+                                        maxLines: 3,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    const Text("choice text"),
+                                    Container(
+                                      width: 400,
+                                      margin: const EdgeInsets.all(5),
+                                      color: Colors.black26,
+                                      child: TextField(
+                                        controller: choiceTextController,
+                                        maxLines: 3,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                MaterialButton(
+                                  onPressed: nodeService.selectedNode != null
+                                      ? createNode
+                                      : null,
+                                  child: Container(
+                                      padding: const EdgeInsets.all(5),
+                                      decoration: const BoxDecoration(
+                                          color: Colors.blue,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10))),
+                                      child: const Text("submit")),
+                                ),
+                              ],
                             ),
-                            MaterialButton(
-                              onPressed: nodeService.selectedNode != null
-                                  ? switchRemovingEdge
-                                  : null,
-                              child: Container(
-                                  padding: const EdgeInsets.all(5),
-                                  decoration: BoxDecoration(
-                                      color: nodeService.isRemovingEdge
-                                          ? Colors.amber
-                                          : Colors.blue,
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(10))),
-                                  child: Text(nodeService.isRemovingEdge
-                                      ? "submit remove edge"
-                                      : "Remove edge")),
+                            Wrap(
+                              runSpacing: 10,
+                              children: [
+                                MaterialButton(
+                                  onPressed: nodeService.selectedNode != null
+                                      ? swicthLinkTo
+                                      : null,
+                                  child: Container(
+                                      padding: const EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                          color: nodeService.isLinkingTo
+                                              ? Colors.amber
+                                              : Colors.blue,
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(10))),
+                                      child: Text(nodeService.isLinkingTo
+                                          ? "submit link"
+                                          : "link to")),
+                                ),
+                                MaterialButton(
+                                  onPressed: nodeService.selectedNode != null
+                                      ? switchRemovingEdge
+                                      : null,
+                                  child: Container(
+                                      padding: const EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                          color: nodeService.isRemovingEdge
+                                              ? Colors.amber
+                                              : Colors.blue,
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(10))),
+                                      child: Text(nodeService.isRemovingEdge
+                                          ? "submit remove edge"
+                                          : "Remove edge")),
+                                ),
+                                MaterialButton(
+                                  onPressed: nodeService.selectedNode != null
+                                      ? removeNode
+                                      : null,
+                                  child: Container(
+                                      padding: const EdgeInsets.all(5),
+                                      decoration: const BoxDecoration(
+                                          color: Colors.red,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10))),
+                                      child: Text(nodeService.isRemovingEdge
+                                          ? "submit remove"
+                                          : "Remove (warning: no confirmation)")),
+                                ),
+                              ],
                             ),
-                            MaterialButton(
-                              onPressed: nodeService.selectedNode != null
-                                  ? removeNode
-                                  : null,
-                              child: Container(
-                                  padding: const EdgeInsets.all(5),
-                                  decoration: const BoxDecoration(
-                                      color: Colors.red,
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10))),
-                                  child: Text(nodeService.isRemovingEdge
-                                      ? "submit remove"
-                                      : "Remove (warning: no confirmation)")),
-                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Column(
+                                  children: [
+                                    const Text("File"),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 200,
+                                          child: TextField(
+                                            controller: fileNameController,
+                                          ),
+                                        ),
+                                        MaterialButton(
+                                          onPressed: loadStory,
+                                          child: const Text("✔️"),
+                                        )
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )
                           ],
                         ),
-                      )
+                      ),
                     ],
                   );
                 })
