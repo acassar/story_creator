@@ -15,6 +15,11 @@ class StoryItem {
     this.moreText,
   });
 
+  static createFromForm({required String id, required String text, required String choiceText, String? end}) {
+    List<String> moreText = text.split("\n");
+    return StoryItem(id, moreText[0], choiceText: choiceText, moreText: moreText.sublist(1));
+  }
+
   _getMoreTextString() {
     String s = moreText != null ? "\n -${moreText?.map((e) => "$e").join("\n- ")}" : "none";
     return s;

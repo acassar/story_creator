@@ -53,12 +53,19 @@ class _StoryCreatorState extends State<StoryCreator> {
     Provider.of<NodeService>(context, listen: false).selectNode(item);
   }
 
+  bool isIdExist(String id) {
+    return example!.items.any((element) => element.id == id);
+  }
+
   createNode() {
     String id = const Uuid().v4();
+    while(isIdExist(id)) {
+      id = const Uuid().v4();
+    }
     NodeService nodeService = Provider.of<NodeService>(context, listen: false);
+    StoryItem newItem = StoryItem.createFromForm(id: id, text: textController.text, choiceText: choiceTextController.text);
     setState(() {
-      example!.items.add(StoryItem(id, textController.text,
-          choiceText: choiceTextController.text));
+      example!.items.add(newItem);
       example!.edges.add(StoryEdge(nodeService.selectedNode!.id, id));
       graph.addEdge(Node.Id(nodeService.selectedNode!.id), Node.Id(id));
       nodeService.selectNode(null);
@@ -152,7 +159,7 @@ class _StoryCreatorState extends State<StoryCreator> {
                     children: [
                       Column(
                         children: [
-                          const Text("text"),
+                          const Text("text (press enter to add new text chunks => will be inserted in \"more text\")"),
                           Container(
                             width: 400,
                             margin: const EdgeInsets.all(5),
