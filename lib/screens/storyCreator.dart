@@ -26,6 +26,7 @@ class _StoryCreatorState extends State<StoryCreator> {
   SugiyamaConfiguration builder = SugiyamaConfiguration();
   TextEditingController textController = TextEditingController();
   TextEditingController choiceTextController = TextEditingController();
+  String error = "";
 
   @override
   void initState() {
@@ -75,40 +76,55 @@ class _StoryCreatorState extends State<StoryCreator> {
     return example!.edges.where((element) => element.to == linked.id).toList();
   }
 
+  addError(String error) async {
+    setState(() {
+      this.error +=
+              "\n $error";
+    });
+    await Future.delayed(const Duration(seconds: 20));
+    setState(() {
+      this.error = "";
+    });
+  }
+
   removeLink() {
     NodeService nodeService = Provider.of<NodeService>(context, listen: false);
     List<StoryEdge> edges = getLinkedNodeEdges();
-    if(edges.isNotEmpty)
-    {
-      setState(() {
-        example!.edges.remove(edges.firstWhere((element) => element.from == nodeService.selectedNode!.id)); //removing wanted edge
+    if (edges.isNotEmpty) {
         Node fromNode = graph.getNodeUsingId(nodeService.selectedNode!.id);
         Node toNode = graph.getNodeUsingId(nodeService.linkToSelection!.id);
         Edge? edge = graph.getEdgeBetween(fromNode, toNode);
-        graph.removeEdge(edge!);
+      setState(() {
+        if (edge == null) {
+          addError("Select a correct edge (select first the parent, then the child. Make sure that there also is an active edge)");
+        } else {
+          example!.edges.remove(edges.firstWhere((element) =>
+              element.from ==
+              nodeService.selectedNode!.id)); //removing wanted edge in the story
+          graph.removeEdge(edge); //removing it from the graph
+        }
       });
-    }
-    else {
+    } else {
       stdout.write("must have at least one active edge");
     }
   }
 
   addLink() {
     NodeService nodeService = Provider.of<NodeService>(context, listen: false);
-    example!.edges
-        .add(StoryEdge(nodeService.selectedNode!.id, nodeService.linkToSelection!.id));
-    graph.addEdge(
-        Node.Id(nodeService.selectedNode!.id), Node.Id(nodeService.linkToSelection!.id));
+    example!.edges.add(StoryEdge(
+        nodeService.selectedNode!.id, nodeService.linkToSelection!.id));
+    graph.addEdge(Node.Id(nodeService.selectedNode!.id),
+        Node.Id(nodeService.linkToSelection!.id));
   }
 
   swicthLinkTo() {
     NodeService nodeService = Provider.of<NodeService>(context, listen: false);
-    nodeService.linkToButtonClicked(addLink);    
+    nodeService.linkToButtonClicked(addLink);
   }
 
   switchRemovingEdge() {
     NodeService nodeService = Provider.of<NodeService>(context, listen: false);
-    nodeService.removeEdgeButtonClicked(removeLink);    
+    nodeService.removeEdgeButtonClicked(removeLink);
   }
 
   @override
@@ -123,8 +139,13 @@ class _StoryCreatorState extends State<StoryCreator> {
             padding: const EdgeInsets.all(10),
             child: Column(
               children: [
+                Text(
+                  error,
+                  style: const TextStyle(color: Colors.red),
+                ),
                 Consumer<NodeService>(builder: (context, nodeService, child) {
-                  return Text("choice to: ${nodeService.selectedNode?.id ?? "nothing"}");
+                  return Text(
+                      "choice to: ${nodeService.selectedNode?.id ?? "nothing"}");
                 }),
                 Consumer<NodeService>(builder: (context, nodeService, child) {
                   return Row(
@@ -176,9 +197,11 @@ class _StoryCreatorState extends State<StoryCreator> {
                         child: Container(
                             padding: const EdgeInsets.all(5),
                             decoration: BoxDecoration(
-                                color: nodeService.isLinkingTo ? Colors.amber :Colors.blue,
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(10))),
+                                color: nodeService.isLinkingTo
+                                    ? Colors.amber
+                                    : Colors.blue,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10))),
                             child: Text(nodeService.isLinkingTo
                                 ? "submit link"
                                 : "link to")),
@@ -190,9 +213,11 @@ class _StoryCreatorState extends State<StoryCreator> {
                         child: Container(
                             padding: const EdgeInsets.all(5),
                             decoration: BoxDecoration(
-                                color: nodeService.isRemovingEdge ? Colors.amber :Colors.blue,
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(10))),
+                                color: nodeService.isRemovingEdge
+                                    ? Colors.amber
+                                    : Colors.blue,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10))),
                             child: Text(nodeService.isRemovingEdge
                                 ? "submit remove edge"
                                 : "Remove edge")),
@@ -212,29 +237,29 @@ class _StoryCreatorState extends State<StoryCreator> {
                 child: Column(
                   children: [
                     Consumer<NodeService>(
-                      builder: (context, nodeService, child) {
-                        return GraphView(
-                          graph: graph,
-                          algorithm: SugiyamaAlgorithm(builder),
-                          paint: Paint()
-                            ..color = Colors.green
-                            ..strokeWidth = 1
-                            ..style = PaintingStyle.stroke,
-                          builder: (Node node) {
-                            // I can decide what widget should be shown here based on the id
-                            var id = node.key!.value;
-                            return StoryNode(
-                              item: findNode(id),
-                              callack: nodeClickCallback,
-                              key: Key(id),
-                              selected: nodeService.selectedNode?.id == id,
-                              linkToSelected: nodeService.linkToSelection?.id == id,
-                              singleClick: setLinkToSelection,
-                            );
-                          },
-                        );
-                      }
-                    ),
+                        builder: (context, nodeService, child) {
+                      return GraphView(
+                        graph: graph,
+                        algorithm: SugiyamaAlgorithm(builder),
+                        paint: Paint()
+                          ..color = Colors.green
+                          ..strokeWidth = 1
+                          ..style = PaintingStyle.stroke,
+                        builder: (Node node) {
+                          // I can decide what widget should be shown here based on the id
+                          var id = node.key!.value;
+                          return StoryNode(
+                            item: findNode(id),
+                            callack: nodeClickCallback,
+                            key: Key(id),
+                            selected: nodeService.selectedNode?.id == id,
+                            linkToSelected:
+                                nodeService.linkToSelection?.id == id,
+                            singleClick: setLinkToSelection,
+                          );
+                        },
+                      );
+                    }),
                   ],
                 )),
           ),
