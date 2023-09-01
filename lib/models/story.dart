@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:story_creator/models/edge.dart';
+import 'package:story_creator/models/storyEdge.dart';
 import 'package:story_creator/models/storyItem.dart';
 
 class Story {
@@ -34,6 +34,8 @@ class Story {
         return EndType.bad;
       case "good":
         return EndType.good;
+      case "not":
+        return EndType.not;
       default:
         throw ErrorDescription("End type not recognised");
     }

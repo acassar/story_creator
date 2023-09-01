@@ -1,4 +1,6 @@
-enum EndType { bad, good }
+import 'dart:convert';
+
+enum EndType { bad, good, not }
 
 class StoryItem {
   String id;
@@ -34,6 +36,35 @@ class StoryItem {
         ? "\n -${moreText?.map((e) => "$e").join("\n- ")}"
         : "none";
     return s;
+  }
+
+  String? _getMoreTextJson() {
+    return moreText != null ? "[\n\"${moreText!.join("\",\n\"")}\"\n]" : "[]";
+  }
+
+  endTypeToString(EndType type) {
+    switch (type) {
+      case EndType.bad:
+        return "bad";
+      case EndType.good:
+        return "good";
+      case EndType.not:
+        return "not";
+      default:
+        return "not";
+    }
+  }
+
+  String toJson() {
+    return """
+  {
+    "id": "$id",
+    "text": "$text",
+    "choice_text": "${choiceText ?? ""}",
+    "end": "${endTypeToString(end ?? EndType.not) ?? "not"}",
+    "more_text": ${_getMoreTextJson()}
+  }
+""";
   }
 
   @override

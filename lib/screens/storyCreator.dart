@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:story_creator/components/storyNode.dart';
-import 'package:story_creator/models/edge.dart';
+import 'package:story_creator/models/storyEdge.dart';
 import 'package:story_creator/models/story.dart';
 import 'package:story_creator/models/storyItem.dart';
 import 'package:story_creator/services/nodeService.dart';
@@ -45,6 +45,11 @@ class _StoryCreatorState extends State<StoryCreator> {
     s.edges.forEach((element) {
       graph.addEdge(Node.Id(element.from), Node.Id(element.to));
     });
+    setState(() {});
+  }
+
+  void saveStory() {
+    storyService.saveStory(story!, fileNameController.text);
     setState(() {});
   }
 
@@ -294,6 +299,7 @@ class _StoryCreatorState extends State<StoryCreator> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     const Text("File"),
                                     Row(
@@ -306,10 +312,34 @@ class _StoryCreatorState extends State<StoryCreator> {
                                         ),
                                         MaterialButton(
                                           onPressed: loadStory,
-                                          child: const Text("✔️"),
+                                          child: const Text("Load"),
                                         )
                                       ],
                                     ),
+                                    Container(
+                                      margin: const EdgeInsets.all(10),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            margin: const EdgeInsets.only(
+                                                right: 10),
+                                            child: MaterialButton(
+                                              onPressed: loadStory,
+                                              color: Colors.red,
+                                              child: const Text(
+                                                  "Reset to last save"),
+                                            ),
+                                          ),
+                                          MaterialButton(
+                                            onPressed: saveStory,
+                                            color: Colors.green,
+                                            child: const Text("Save"),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    Text(
+                                        "last save: ${storyService.getLastSave(fileNameController.text)}"),
                                   ],
                                 ),
                               ],
