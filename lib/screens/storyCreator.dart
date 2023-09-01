@@ -184,7 +184,9 @@ class _StoryCreatorState extends State<StoryCreator> {
                 Consumer<NodeService>(builder: (context, nodeService, child) {
                   return Row(
                     children: [
-                      Column(
+                      Row(
+                        children: [
+                          Column(
                         children: [
                           const Text(
                               "text (press enter to add new text chunks => will be inserted in \"more text\")"),
@@ -225,52 +227,61 @@ class _StoryCreatorState extends State<StoryCreator> {
                                     BorderRadius.all(Radius.circular(10))),
                             child: const Text("submit")),
                       ),
-                      MaterialButton(
-                        onPressed: nodeService.selectedNode != null
-                            ? swicthLinkTo
-                            : null,
-                        child: Container(
-                            padding: const EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                                color: nodeService.isLinkingTo
-                                    ? Colors.amber
-                                    : Colors.blue,
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(10))),
-                            child: Text(nodeService.isLinkingTo
-                                ? "submit link"
-                                : "link to")),
+                        ],
                       ),
-                      MaterialButton(
-                        onPressed: nodeService.selectedNode != null
-                            ? switchRemovingEdge
-                            : null,
-                        child: Container(
-                            padding: const EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                                color: nodeService.isRemovingEdge
-                                    ? Colors.amber
-                                    : Colors.blue,
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(10))),
-                            child: Text(nodeService.isRemovingEdge
-                                ? "submit remove edge"
-                                : "Remove edge")),
-                      ),
-                      MaterialButton(
-                        onPressed: nodeService.selectedNode != null
-                            ? removeNode
-                            : null,
-                        child: Container(
-                            padding: const EdgeInsets.all(5),
-                            decoration: const BoxDecoration(
-                                color:  Colors.red,
-                                borderRadius: BorderRadius.all(
-                                    Radius.circular(10))),
-                            child: Text(nodeService.isRemovingEdge
-                                ? "submit remove"
-                                : "Remove (warning: no confirmation)")),
-                      ),
+                      Expanded(
+                        child: Wrap(
+                          runSpacing: 10,
+                          children: [
+                            MaterialButton(
+                              onPressed: nodeService.selectedNode != null
+                                  ? swicthLinkTo
+                                  : null,
+                              child: Container(
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                      color: nodeService.isLinkingTo
+                                          ? Colors.amber
+                                          : Colors.blue,
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(10))),
+                                  child: Text(nodeService.isLinkingTo
+                                      ? "submit link"
+                                      : "link to")),
+                            ),
+                            MaterialButton(
+                              onPressed: nodeService.selectedNode != null
+                                  ? switchRemovingEdge
+                                  : null,
+                              child: Container(
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                      color: nodeService.isRemovingEdge
+                                          ? Colors.amber
+                                          : Colors.blue,
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(10))),
+                                  child: Text(nodeService.isRemovingEdge
+                                      ? "submit remove edge"
+                                      : "Remove edge")),
+                            ),
+                            MaterialButton(
+                              onPressed: nodeService.selectedNode != null
+                                  ? removeNode
+                                  : null,
+                              child: Container(
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: const BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10))),
+                                  child: Text(nodeService.isRemovingEdge
+                                      ? "submit remove"
+                                      : "Remove (warning: no confirmation)")),
+                            ),
+                          ],
+                        ),
+                      )
                     ],
                   );
                 })
