@@ -59,11 +59,14 @@ class _StoryCreatorState extends State<StoryCreator> {
 
   createNode() {
     String id = const Uuid().v4();
-    while(isIdExist(id)) {
+    while (isIdExist(id)) {
       id = const Uuid().v4();
     }
     NodeService nodeService = Provider.of<NodeService>(context, listen: false);
-    StoryItem newItem = StoryItem.createFromForm(id: id, text: textController.text, choiceText: choiceTextController.text);
+    StoryItem newItem = StoryItem.createFromForm(
+        id: id,
+        text: textController.text,
+        choiceText: choiceTextController.text);
     setState(() {
       example!.items.add(newItem);
       example!.edges.add(StoryEdge(nodeService.selectedNode!.id, id));
@@ -85,8 +88,7 @@ class _StoryCreatorState extends State<StoryCreator> {
 
   addError(String error) async {
     setState(() {
-      this.error +=
-              "\n $error";
+      this.error += "\n $error";
     });
     await Future.delayed(const Duration(seconds: 20));
     setState(() {
@@ -98,16 +100,18 @@ class _StoryCreatorState extends State<StoryCreator> {
     NodeService nodeService = Provider.of<NodeService>(context, listen: false);
     List<StoryEdge> edges = getLinkedNodeEdges();
     if (edges.isNotEmpty) {
-        Node fromNode = graph.getNodeUsingId(nodeService.selectedNode!.id);
-        Node toNode = graph.getNodeUsingId(nodeService.linkToSelection!.id);
-        Edge? edge = graph.getEdgeBetween(fromNode, toNode);
+      Node fromNode = graph.getNodeUsingId(nodeService.selectedNode!.id);
+      Node toNode = graph.getNodeUsingId(nodeService.linkToSelection!.id);
+      Edge? edge = graph.getEdgeBetween(fromNode, toNode);
       setState(() {
         if (edge == null) {
-          addError("Select a correct edge (select first the parent, then the child. Make sure that there also is an active edge)");
+          addError(
+              "Select a correct edge (select first the parent, then the child. Make sure that there also is an active edge)");
         } else {
           example!.edges.remove(edges.firstWhere((element) =>
               element.from ==
-              nodeService.selectedNode!.id)); //removing wanted edge in the story
+              nodeService
+                  .selectedNode!.id)); //removing wanted edge in the story
           graph.removeEdge(edge); //removing it from the graph
         }
       });
@@ -132,6 +136,21 @@ class _StoryCreatorState extends State<StoryCreator> {
   switchRemovingEdge() {
     NodeService nodeService = Provider.of<NodeService>(context, listen: false);
     nodeService.removeEdgeButtonClicked(removeLink);
+  }
+
+  removeNode() {
+    NodeService nodeService = Provider.of<NodeService>(context, listen: false);
+    String selectedNodeID = nodeService.selectedNode!.id;
+    if (example!.edges.any(
+      (element) => element.from == selectedNodeID,
+    )) {
+      addError("Make sure there is no child to that node before removing it");
+    } else {
+      graph.removeNode(graph.getNodeUsingId(selectedNodeID));
+      example!.items.removeWhere((element) => element.id == selectedNodeID); // removing this node
+      example!.edges.removeWhere((element) => element.to == selectedNodeID); //removing all edges that have this node as destination
+      nodeService.clear();
+    }
   }
 
   @override
@@ -159,7 +178,8 @@ class _StoryCreatorState extends State<StoryCreator> {
                     children: [
                       Column(
                         children: [
-                          const Text("text (press enter to add new text chunks => will be inserted in \"more text\")"),
+                          const Text(
+                              "text (press enter to add new text chunks => will be inserted in \"more text\")"),
                           Container(
                             width: 400,
                             margin: const EdgeInsets.all(5),
@@ -228,6 +248,22 @@ class _StoryCreatorState extends State<StoryCreator> {
                             child: Text(nodeService.isRemovingEdge
                                 ? "submit remove edge"
                                 : "Remove edge")),
+                      ),
+                      MaterialButton(
+                        onPressed: nodeService.selectedNode != null
+                            ? removeNode
+                            : null,
+                        child: Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                                color: nodeService.isRemovingEdge
+                                    ? Colors.amber
+                                    : Colors.red,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10))),
+                            child: Text(nodeService.isRemovingEdge
+                                ? "submit remove"
+                                : "Remove (warning: no confirmation)")),
                       ),
                     ],
                   );
