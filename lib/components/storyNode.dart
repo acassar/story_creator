@@ -32,9 +32,10 @@ class StoryNode extends StatelessWidget {
             borderRadius: const BorderRadius.all(Radius.circular(10))),
         child: Column(
           children: [
-            Text("id: ${item.id}"),
-            Text("choice: ${item.choiceText}"),
-            Text("text: ${item.text}"),
+            Text(
+              item.toString(),
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),
