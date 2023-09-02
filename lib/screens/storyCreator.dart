@@ -62,14 +62,14 @@ class _StoryCreatorState extends State<StoryCreator> {
     return story!.items.any((element) => element.id == id);
   }
 
-  createNode(String text, String choiceText, String endTypeSelected) {
+  createNode(String text, String choiceText, String endTypeSelected, String minutesDelay) {
     String id = const Uuid().v4();
     while (isIdExist(id)) {
       id = const Uuid().v4();
     }
     NodeService nodeService = Provider.of<NodeService>(context, listen: false);
     StoryItem newItem = StoryItem.createFromForm(
-        id: id, text: text, choiceText: choiceText, end: endTypeSelected);
+        id: id, text: text, choiceText: choiceText, end: endTypeSelected, minutesDelay: minutesDelay);
     setState(() {
       story!.items.add(newItem);
       story!.edges.add(StoryEdge(nodeService.selectedNode!.id, id));
@@ -151,13 +151,14 @@ class _StoryCreatorState extends State<StoryCreator> {
     }
   }
 
-  updateNode(String text, String choiceText, String endTypeSelected) {
+  updateNode(String text, String choiceText, String endTypeSelected, String minutesDelay) {
     NodeService nodeService = Provider.of<NodeService>(context, listen: false);
     StoryItem item = story!.items
         .firstWhere((element) => element.id == nodeService.selectedNode!.id);
     item.text = text;
     item.choiceText = choiceText;
     item.end = StoryItem.stringToEndType(endTypeSelected);
+    item.minutesToWait = int.parse(minutesDelay);
     nodeService.clear();
     setState(() {});
   }

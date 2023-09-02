@@ -25,6 +25,7 @@ class StoryItem {
       {required String id,
       required String text,
       required String choiceText,
+      required String minutesDelay,
       String? end}) {
     List<String> formatedText = text.split("\n");
     List<String> moreText = formatedText.sublist(1);
@@ -32,7 +33,7 @@ class StoryItem {
       (element) => element == "",
     );
     return StoryItem(id, formatedText[0],
-        choiceText: choiceText, moreText: moreText.isEmpty ? [] : moreText, end: end != null ? stringToEndType(end) : EndType.not);
+        choiceText: choiceText, moreText: moreText.isEmpty ? [] : moreText, end: end != null ? stringToEndType(end) : EndType.not, minutesToWait: int.parse(minutesDelay));
   }
 
   _getMoreTextString() {

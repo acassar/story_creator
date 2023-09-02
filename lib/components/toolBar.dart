@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:story_creator/services/nodeService.dart';
 
@@ -33,6 +34,8 @@ class _ToolbarState extends State<Toolbar> {
   TextEditingController textController = TextEditingController();
   TextEditingController choiceTextController = TextEditingController();
   TextEditingController fileNameController = TextEditingController();
+  TextEditingController minutesDelayController =
+      TextEditingController(text: "0");
   List<String> error = [];
   List<DropdownMenuItem> dropdownItems = [
     const DropdownMenuItem(
@@ -98,132 +101,186 @@ class _ToolbarState extends State<Toolbar> {
               children: [
                 Expanded(
                   child: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.start,
                     alignment: WrapAlignment.spaceBetween,
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                  "text (press enter to add new text chunks => will be inserted in \"more text\")"),
-                              Container(
-                                width: 400,
-                                margin: const EdgeInsets.all(5),
-                                color: Colors.black26,
-                                child: TextField(
-                                  controller: textController,
-                                  maxLines: 3,
-                                ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Column(
+                                    children: [
+                                      const Text(
+                                          "text (press enter to add new text chunks => will be inserted in \"more text\")"),
+                                      Container(
+                                        width: 400,
+                                        margin: const EdgeInsets.all(5),
+                                        color: Colors.black26,
+                                        child: TextField(
+                                          controller: textController,
+                                          maxLines: 3,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      const Text("choice text"),
+                                      Container(
+                                        width: 400,
+                                        margin: const EdgeInsets.all(5),
+                                        color: Colors.black26,
+                                        child: TextField(
+                                          controller: choiceTextController,
+                                          maxLines: 3,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      const Text("End type"),
+                                      DropdownButton(
+                                          items: dropdownItems,
+                                          onChanged: onEndTypeSelect,
+                                          value: endTypeSelected),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      Container(
+                                        margin:
+                                            const EdgeInsets.only(bottom: 10),
+                                        child: MaterialButton(
+                                          onPressed: nodeService.selectedNode !=
+                                                  null
+                                              ? () => widget.createNode(
+                                                    textController.text,
+                                                    choiceTextController.text,
+                                                    endTypeSelected,
+                                                    minutesDelayController.text,
+                                                  )
+                                              : null,
+                                          child: Container(
+                                              padding: const EdgeInsets.all(5),
+                                              decoration: const BoxDecoration(
+                                                  color: Colors.blue,
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(10))),
+                                              child: const Text("new choice")),
+                                        ),
+                                      ),
+                                      MaterialButton(
+                                        onPressed:
+                                            nodeService.selectedNode != null
+                                                ? () => widget.updateNode(
+                                                      textController.text,
+                                                      choiceTextController.text,
+                                                      endTypeSelected,
+                                                      minutesDelayController.text
+                                                    )
+                                                : null,
+                                        child: Container(
+                                            padding: const EdgeInsets.all(5),
+                                            decoration: const BoxDecoration(
+                                                color: Colors.blue,
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(10))),
+                                            child: const Text("update node")),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              const Text("choice text"),
-                              Container(
-                                width: 400,
-                                margin: const EdgeInsets.all(5),
-                                color: Colors.black26,
-                                child: TextField(
-                                  controller: choiceTextController,
-                                  maxLines: 3,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              const Text("End type"),
-                              DropdownButton(
-                                  items: dropdownItems,
-                                  onChanged: onEndTypeSelect,
-                                  value: endTypeSelected),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.only(bottom: 10),
-                                child: MaterialButton(
-                                  onPressed: nodeService.selectedNode != null
-                                      ? () => widget.createNode(textController.text,
-                                          choiceTextController.text, endTypeSelected)
-                                      : null,
-                                  child: Container(
-                                      padding: const EdgeInsets.all(5),
-                                      decoration: const BoxDecoration(
-                                          color: Colors.blue,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10))),
-                                      child: const Text("new choice")),
-                                ),
-                              ),
-                              MaterialButton(
-                                onPressed: nodeService.selectedNode != null
-                                    ? () => widget.updateNode(textController.text, choiceTextController.text, endTypeSelected)
-                                    : null,
-                                child: Container(
-                                    padding: const EdgeInsets.all(5),
-                                    decoration: const BoxDecoration(
-                                        color: Colors.blue,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10))),
-                                    child: const Text("update node")),
+                              Row(
+                                // mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Column(
+                                    children: [
+                                      const Text(
+                                          "Minutes delay before display"),
+                                      Container(
+                                        width: 100,
+                                        margin: const EdgeInsets.all(5),
+                                        color: Colors.black26,
+                                        child: TextField(
+                                          inputFormatters: <TextInputFormatter>[
+                                            FilteringTextInputFormatter
+                                                .digitsOnly
+                                          ],
+                                          keyboardType: TextInputType.number,
+                                          controller: minutesDelayController,
+                                          maxLines: 1,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ],
                           ),
                         ],
                       ),
-                      Wrap(
-                        runSpacing: 10,
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          MaterialButton(
-                            onPressed: nodeService.selectedNode != null
-                                ? widget.swicthLinkTo
-                                : null,
-                            child: Container(
-                                padding: const EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                    color: nodeService.isLinkingTo
-                                        ? Colors.amber
-                                        : Colors.blue,
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(10))),
-                                child: Text(nodeService.isLinkingTo
-                                    ? "submit link"
-                                    : "link to")),
-                          ),
-                          MaterialButton(
-                            onPressed: nodeService.selectedNode != null
-                                ? () => widget.switchRemovingEdge(addError)
-                                : null,
-                            child: Container(
-                                padding: const EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                    color: nodeService.isRemovingEdge
-                                        ? Colors.amber
-                                        : Colors.blue,
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(10))),
-                                child: Text(nodeService.isRemovingEdge
-                                    ? "submit remove edge"
-                                    : "Remove edge")),
-                          ),
-                          MaterialButton(
-                            onPressed: nodeService.selectedNode != null
-                                ? () => widget.removeNode(addError)
-                                : null,
-                            child: Container(
-                                padding: const EdgeInsets.all(5),
-                                decoration: const BoxDecoration(
-                                    color: Colors.red,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10))),
-                                child: Text(nodeService.isRemovingEdge
-                                    ? "submit remove"
-                                    : "Remove (warning: no confirmation)")),
+                          Wrap(
+                            runSpacing: 10,
+                            children: [
+                              MaterialButton(
+                                onPressed: nodeService.selectedNode != null
+                                    ? widget.swicthLinkTo
+                                    : null,
+                                child: Container(
+                                    padding: const EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                        color: nodeService.isLinkingTo
+                                            ? Colors.amber
+                                            : Colors.blue,
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(10))),
+                                    child: Text(nodeService.isLinkingTo
+                                        ? "submit link"
+                                        : "link to")),
+                              ),
+                              MaterialButton(
+                                onPressed: nodeService.selectedNode != null
+                                    ? () => widget.switchRemovingEdge(addError)
+                                    : null,
+                                child: Container(
+                                    padding: const EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                        color: nodeService.isRemovingEdge
+                                            ? Colors.amber
+                                            : Colors.blue,
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(10))),
+                                    child: Text(nodeService.isRemovingEdge
+                                        ? "submit remove edge"
+                                        : "Remove edge")),
+                              ),
+                              MaterialButton(
+                                onPressed: nodeService.selectedNode != null
+                                    ? () => widget.removeNode(addError)
+                                    : null,
+                                child: Container(
+                                    padding: const EdgeInsets.all(5),
+                                    decoration: const BoxDecoration(
+                                        color: Colors.red,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10))),
+                                    child: Text(nodeService.isRemovingEdge
+                                        ? "submit remove"
+                                        : "Remove (warning: no confirmation)")),
+                              ),
+                            ],
                           ),
                         ],
                       ),
