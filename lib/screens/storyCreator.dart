@@ -21,7 +21,6 @@ class StoryCreator extends StatefulWidget {
 
 class _StoryCreatorState extends State<StoryCreator> {
   StoryService storyService = StoryService();
-  //TODO: keep only the graph as truth source and remove any modification on the story at every step, but at the end
   Story? story;
   Graph graph = Graph()..isTree = true;
   SugiyamaConfiguration builder = SugiyamaConfiguration();
@@ -169,6 +168,15 @@ class _StoryCreatorState extends State<StoryCreator> {
     }
   }
 
+  updateNode() {
+    NodeService nodeService = Provider.of<NodeService>(context, listen: false);
+    StoryItem item = story!.items
+        .firstWhere((element) => element.id == nodeService.selectedNode!.id);
+    item.text = textController.text;
+    item.choiceText = choiceTextController.text;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     if (story == null) return const Placeholder();
@@ -239,7 +247,19 @@ class _StoryCreatorState extends State<StoryCreator> {
                                           color: Colors.blue,
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(10))),
-                                      child: const Text("submit")),
+                                      child: const Text("new choice")),
+                                ),
+                                MaterialButton(
+                                  onPressed: nodeService.selectedNode != null
+                                      ? updateNode
+                                      : null,
+                                  child: Container(
+                                      padding: const EdgeInsets.all(5),
+                                      decoration: const BoxDecoration(
+                                          color: Colors.blue,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10))),
+                                      child: const Text("update node")),
                                 ),
                               ],
                             ),
