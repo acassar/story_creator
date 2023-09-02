@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:story_creator/models/storyItem.dart';
 
@@ -64,9 +66,9 @@ class NodeService extends ChangeNotifier {
     }
   }
 
-  void removeEdgeButtonClicked(callBack) {
+  void removeEdgeButtonClicked(callBack, errorCallback) {
     if (isRemovingEdge && linkToSelection != null) {
-      callBack();
+      callBack(errorCallback);
       clear();
     } else {
       activateRemoveEdge();
