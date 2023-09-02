@@ -1,66 +1,14 @@
 {
-    "nodes": [
-        {
-            "id": "fAL35RAwlL",
-            "text": "Histoire d'example",
-            "choice_text": "",
-            "more_text": [],
-            "end": "not"
-        },
-        {
-            "id": "ruBnwr2dfM",
-            "text": "Tu as fais le choix numéro 1",
-            "choice_text": "Choix 1",
-            "end": "not",
-            "more_text": [
-                "tu peux continuer l'histoire si tu en as envie",
-                "ou alors t'arrêter là",
-                "que choisis-tu ?"
-            ]
-        },
-        {
-            "id": "9m4Jf2Hafo",
-            "text": "tu as choisis de continuer, merci",
-            "end": "not",
-            "choice_text": "continuer",
-            "more_text": []
-        },
-        {
-            "id":"aQdSC8QR3Z",
-            "text": "La téléportation à fonctionée",
-            "choice_text": "arrivée téléportation",
-            "end": "not",
-            "more_text": []
-        },
-        {
-            "id": "WuflPNeKHa",
-            "text": "tu as choisis d'arrêter, à bientot !",
-            "choice_text": "arrêter",
-            "end": "bad",
-            "more_text": []
-        },
-        {
-            "id": "Tb58JQMbLf",
-            "text": "Tu as fais le choix numéro 2, très bon choix",
-            "choice_text": "Choix 2",
-            "end": "not",
-            "more_text": []
-        },
-        {
-            "id": "OTaIqxeCOW",
-            "text": "test",
-            "choice_text": "téléportation",
-            "end": "not",
-            "more_text": []
-        }
-    ],
-    "edges": [
-        {"from": "fAL35RAwlL", "to": "ruBnwr2dfM"},
-        {"from": "fAL35RAwlL", "to": "Tb58JQMbLf"},
-        {"from": "ruBnwr2dfM", "to": "9m4Jf2Hafo"},
-        {"from": "ruBnwr2dfM", "to": "WuflPNeKHa"},
-        {"from": "9m4Jf2Hafo", "to": "aQdSC8QR3Z"},
-        {"from": "Tb58JQMbLf", "to": "OTaIqxeCOW"},
-        {"from": "OTaIqxeCOW", "to": "9m4Jf2Hafo"}
-    ]
+  "nodes": [
+    {
+      "id": "start",
+      "text": "Story start",
+      "more_text": [],
+      "end": "not",
+      "choice_text": ""
+    }
+  ],
+  "edges": [
+
+  ]
 }

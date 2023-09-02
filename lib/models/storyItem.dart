@@ -10,6 +10,7 @@ class StoryItem {
   List<String> moreText;
   String choiceText;
   EndType end;
+  int minutesToWait;
 
   StoryItem(
     this.id,
@@ -17,6 +18,7 @@ class StoryItem {
     required this.choiceText,
     required this.end,
     required this.moreText,
+    this.minutesToWait = 0
   });
 
   static createFromForm(
@@ -85,6 +87,7 @@ class StoryItem {
   @override
   String toString() {
     return """
+    ⌚ Show after (minutes): $minutesToWait⌚
     🆔 Id: $id 🆔
     💭 Text: $text 💭
     📲 Choice text: $choiceText 📲
