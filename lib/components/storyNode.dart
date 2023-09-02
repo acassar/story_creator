@@ -15,9 +15,22 @@ class StoryNode extends StatelessWidget {
       required this.singleClick,
       required this.linkToSelected});
 
+  getColor() {
+    switch (item.end) {
+      case EndType.bad:
+        return Colors.red.withOpacity(0.8);
+      case EndType.good:
+        return Colors.green.withOpacity(0.8);
+      case EndType.not:
+        return Colors.blue;
+      default:
+        return Colors.grey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    Color color = selected ? Colors.green : Colors.blue;
+    Color color = selected ? Colors.purple.withOpacity(0.5) : getColor();
     if (linkToSelected) {
       color = Colors.amber;
     }
@@ -26,17 +39,22 @@ class StoryNode extends StatelessWidget {
       onDoubleTap: () => callack(item),
       onTap: () => singleClick(item),
       child: Container(
-        padding: const EdgeInsets.all(5),
-        decoration: BoxDecoration(
-            color: color,
-            borderRadius: const BorderRadius.all(Radius.circular(10))),
-        child: Column(
-          children: [
-            Text(
-              item.toString(),
-              textAlign: TextAlign.center,
-            ),
-          ],
+        decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(10))),
+        child: Container(
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+              color: color,
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
+          child: Column(
+            children: [
+              Text(
+                item.toString(),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );

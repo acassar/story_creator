@@ -29,11 +29,33 @@ class _StoryCreatorState extends State<StoryCreator> {
   TextEditingController fileNameController =
       TextEditingController(text: "example");
   List<String> error = [];
+  List<DropdownMenuItem> dropdownItems = [
+    const DropdownMenuItem(
+      value: "not",
+      child: Text("not"),
+    ),
+    const DropdownMenuItem(
+      value: "good",
+      child: Text("good"),
+    ),
+    const DropdownMenuItem(
+      value: "bad",
+      child: Text("bad"),
+    ),
+  ];
+  String? endTypeSelected;
 
   @override
   void initState() {
     super.initState();
+    onEndTypeSelect("not");
     loadStory();
+  }
+
+  onEndTypeSelect(dynamic value) {
+    setState(() {
+      endTypeSelected = value;
+    });
   }
 
   void loadStory() async {
@@ -74,7 +96,8 @@ class _StoryCreatorState extends State<StoryCreator> {
     StoryItem newItem = StoryItem.createFromForm(
         id: id,
         text: textController.text,
-        choiceText: choiceTextController.text);
+        choiceText: choiceTextController.text,
+        end: endTypeSelected);
     setState(() {
       story!.items.add(newItem);
       story!.edges.add(StoryEdge(nodeService.selectedNode!.id, id));
@@ -174,6 +197,8 @@ class _StoryCreatorState extends State<StoryCreator> {
         .firstWhere((element) => element.id == nodeService.selectedNode!.id);
     item.text = textController.text;
     item.choiceText = choiceTextController.text;
+    item.end = StoryItem.stringToEndType(endTypeSelected!);
+    nodeService.clear();
     setState(() {});
   }
 
@@ -237,29 +262,47 @@ class _StoryCreatorState extends State<StoryCreator> {
                                     ),
                                   ],
                                 ),
-                                MaterialButton(
-                                  onPressed: nodeService.selectedNode != null
-                                      ? createNode
-                                      : null,
-                                  child: Container(
-                                      padding: const EdgeInsets.all(5),
-                                      decoration: const BoxDecoration(
-                                          color: Colors.blue,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10))),
-                                      child: const Text("new choice")),
+                                Column(
+                                  children: [
+                                    const Text("End type"),
+                                    DropdownButton(
+                                        items: dropdownItems,
+                                        onChanged: onEndTypeSelect,
+                                        value: endTypeSelected),
+                                  ],
                                 ),
-                                MaterialButton(
-                                  onPressed: nodeService.selectedNode != null
-                                      ? updateNode
-                                      : null,
-                                  child: Container(
-                                      padding: const EdgeInsets.all(5),
-                                      decoration: const BoxDecoration(
-                                          color: Colors.blue,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10))),
-                                      child: const Text("update node")),
+                                Column(
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.only(bottom: 10),
+                                      child: MaterialButton(
+                                        onPressed:
+                                            nodeService.selectedNode != null
+                                                ? createNode
+                                                : null,
+                                        child: Container(
+                                            padding: const EdgeInsets.all(5),
+                                            decoration: const BoxDecoration(
+                                                color: Colors.blue,
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(10))),
+                                            child: const Text("new choice")),
+                                      ),
+                                    ),
+                                    MaterialButton(
+                                      onPressed:
+                                          nodeService.selectedNode != null
+                                              ? updateNode
+                                              : null,
+                                      child: Container(
+                                          padding: const EdgeInsets.all(5),
+                                          decoration: const BoxDecoration(
+                                              color: Colors.blue,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10))),
+                                          child: const Text("update node")),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
