@@ -105,8 +105,12 @@ class _ToolbarState extends State<Toolbar> {
   }
 
   void removeNode(StoryServiceProvider storyServiceProvider, NodeServiceProvider nodeServiceProvider) {
+    try {
     storyServiceProvider.removeNode(nodeServiceProvider.selectedNode!);
       nodeServiceProvider.clear();
+    } catch(error) {
+      addError(error.toString());
+    }
   }
 
   @override
@@ -123,7 +127,7 @@ class _ToolbarState extends State<Toolbar> {
           ),
           Consumer<NodeServiceProvider>(builder: (context, nodeService, child) {
             return Text(
-                "choice to: ${nodeService.selectedNode?.id ?? "nothing"}");
+                "node selected: ${nodeService.selectedNode?.id ?? "nothing"}");
           }),
           Consumer<NodeServiceProvider>(builder: (context, nodeService, child) {
             return Row(
