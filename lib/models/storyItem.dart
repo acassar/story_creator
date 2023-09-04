@@ -25,12 +25,7 @@ class StoryItem {
       required String minutesDelay,
       required bool isUser,
       String? end}) {
-    List<String> formatedText = text.split("\n");
-    List<String> moreText = formatedText.sublist(1);
-    moreText.removeWhere(
-      (element) => element == "",
-    );
-    return StoryItem(id, formatedText[0],
+    return StoryItem(id, text,
         isUser: isUser, end: end != null ? stringToEndType(end) : EndType.not, minutesToWait: int.parse(minutesDelay));
   }
 

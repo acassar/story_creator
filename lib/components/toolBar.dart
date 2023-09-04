@@ -15,7 +15,6 @@ class Toolbar extends StatefulWidget {
 
 class _ToolbarState extends State<Toolbar> {
   TextEditingController textController = TextEditingController();
-  TextEditingController choiceTextController = TextEditingController();
   TextEditingController fileNameController = TextEditingController();
   TextEditingController minutesDelayController =
       TextEditingController(text: "0");
@@ -147,7 +146,7 @@ class _ToolbarState extends State<Toolbar> {
                                   Column(
                                     children: [
                                       const Text(
-                                          "text (press enter to add new text chunks => will be inserted in \"more text\")"),
+                                          "text"),
                                       Container(
                                         width: 400,
                                         margin: const EdgeInsets.all(5),
@@ -159,20 +158,7 @@ class _ToolbarState extends State<Toolbar> {
                                       ),
                                     ],
                                   ),
-                                  Column(
-                                    children: [
-                                      const Text("choice text"),
-                                      Container(
-                                        width: 400,
-                                        margin: const EdgeInsets.all(5),
-                                        color: Colors.black26,
-                                        child: TextField(
-                                          controller: choiceTextController,
-                                          maxLines: 3,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                  
                                   Column(
                                     children: [
                                       const Text("End type"),
