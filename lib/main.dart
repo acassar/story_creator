@@ -2,12 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:story_creator/screens/storyCreator.dart';
 import 'package:story_creator/services/nodeServiceProvider.dart';
+import 'package:story_creator/services/storyServiceProvider.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => NodeServiceProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => StoryServiceProvider(),
+        ),
+      ],
       child: const MyApp(),
-      create: (context) => NodeServiceProvider(),
     ),
   );
 }

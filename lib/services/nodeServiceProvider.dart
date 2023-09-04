@@ -56,22 +56,4 @@ class NodeServiceProvider extends ChangeNotifier {
     deactivateLinkTo();
     deactivateRemoveEdge();
   }
-
-  void linkToButtonClicked(callBack) {
-    if (isLinkingTo && linkToSelection != null) {
-      callBack();
-      clear();
-    } else {
-      activateLinkTo();
-    }
-  }
-
-  void removeEdgeButtonClicked(callBack, errorCallback) {
-    if (isRemovingEdge && linkToSelection != null) {
-      callBack(errorCallback);
-      clear();
-    } else {
-      activateRemoveEdge();
-    }
-  }
 }

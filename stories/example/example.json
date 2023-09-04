@@ -7,9 +7,42 @@
     "minutes_to_wait": "0",
     "is_user": "false"
   }
+,  {
+    "id": "2f1e0b7b-5dda-4b5f-a3ee-a744563eb9af",
+    "text": "test",
+    "end": "not",
+    "minutes_to_wait": "30",
+    "is_user": "false"
+  }
+,  {
+    "id": "659ce6ef-e818-4301-8c6f-87cb66795ae3",
+    "text": "test3",
+    "end": "good",
+    "minutes_to_wait": "30",
+    "is_user": "false"
+  }
+,  {
+    "id": "4b143c9b-1d29-45ac-95a9-058b63982dab",
+    "text": "test2",
+    "end": "bad",
+    "minutes_to_wait": "30",
+    "is_user": "false"
+  }
 
   ],
   "edges": [
-    
+      {
+    "from": "start",
+    "to": "2f1e0b7b-5dda-4b5f-a3ee-a744563eb9af"
+  }
+,  {
+    "from": "2f1e0b7b-5dda-4b5f-a3ee-a744563eb9af",
+    "to": "659ce6ef-e818-4301-8c6f-87cb66795ae3"
+  }
+,  {
+    "from": "2f1e0b7b-5dda-4b5f-a3ee-a744563eb9af",
+    "to": "4b143c9b-1d29-45ac-95a9-058b63982dab"
+  }
+
   ]
 }
