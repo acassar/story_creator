@@ -22,7 +22,7 @@ class StoryNode extends StatelessWidget {
       case EndType.good:
         return Colors.green.withOpacity(0.8);
       case EndType.not:
-        return Colors.blue.withOpacity(0.5);
+        return item.isUser ? Colors.deepOrange.withOpacity(0.5) : Colors.blue.withOpacity(0.5);
       default:
         return Colors.grey;
     }

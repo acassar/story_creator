@@ -6,7 +6,6 @@ import 'package:graphview/GraphView.dart';
 import 'package:story_creator/models/story.dart';
 import 'package:story_creator/models/storyEdge.dart';
 import 'package:story_creator/models/storyItem.dart';
-import 'package:story_creator/services/nodeServiceProvider.dart';
 import 'package:uuid/uuid.dart';
 
 class StoryServiceProvider extends ChangeNotifier {
@@ -71,21 +70,18 @@ class StoryServiceProvider extends ChangeNotifier {
     return currentStory!.items.any((element) => element.id == id);
   }
 
-  createNode(String text, String endTypeSelected, String minutesDelay,
-      bool isUser, StoryItem selectedItem) {
+  String getNewId() {
     String id = const Uuid().v4();
     while (isIdExist(id)) {
       id = const Uuid().v4();
     }
-    StoryItem newItem = StoryItem.createFromForm(
-        id: id,
-        text: text,
-        isUser: isUser,
-        end: endTypeSelected,
-        minutesDelay: minutesDelay);
-    currentStory!.items.add(newItem);
-    currentStory!.edges.add(StoryEdge(selectedItem.id, id));
-    graph.addEdge(Node.Id(selectedItem.id), Node.Id(id));
+    return id;
+  }
+
+  createNode(StoryItem item, StoryItem selectedItem) {
+    currentStory!.items.add(item);
+    currentStory!.edges.add(StoryEdge(selectedItem.id, item.id));
+    graph.addEdge(Node.Id(selectedItem.id), Node.Id(item.id));
     notifyListeners();
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:story_creator/models/storyItem.dart';
 import 'package:story_creator/services/nodeServiceProvider.dart';
 import 'package:story_creator/services/storyServiceProvider.dart';
 
@@ -34,6 +35,7 @@ class _ToolbarState extends State<Toolbar> {
     ),
   ];
   String? endTypeSelected;
+  bool isUserSpeaking = false;
 
   onEndTypeSelect(dynamic value) {
     setState(() {
@@ -64,8 +66,13 @@ class _ToolbarState extends State<Toolbar> {
 
   void createNode(
       StoryServiceProvider storyService, NodeServiceProvider nodeService) {
-    storyService.createNode(textController.text, endTypeSelected!,
-        minutesDelayController.text, false, nodeService.selectedNode!);
+    StoryItem newItem = StoryItem.createFromForm(
+        id: storyService.getNewId(),
+        text: textController.text,
+        isUser: isUserSpeaking,
+        end: endTypeSelected,
+        minutesDelay: minutesDelayController.text);
+    storyService.createNode(newItem, nodeService.selectedNode!);
     nodeService.selectNode(null);
   }
 
@@ -104,13 +111,20 @@ class _ToolbarState extends State<Toolbar> {
     }
   }
 
-  void removeNode(StoryServiceProvider storyServiceProvider, NodeServiceProvider nodeServiceProvider) {
+  void removeNode(StoryServiceProvider storyServiceProvider,
+      NodeServiceProvider nodeServiceProvider) {
     try {
-    storyServiceProvider.removeNode(nodeServiceProvider.selectedNode!);
+      storyServiceProvider.removeNode(nodeServiceProvider.selectedNode!);
       nodeServiceProvider.clear();
-    } catch(error) {
+    } catch (error) {
       addError(error.toString());
     }
+  }
+
+  void isUserSpeakingChange(bool? isSpeaking) {
+    setState(() {
+      isUserSpeaking = isSpeaking ?? false;
+    });
   }
 
   @override
@@ -149,8 +163,7 @@ class _ToolbarState extends State<Toolbar> {
                                 children: [
                                   Column(
                                     children: [
-                                      const Text(
-                                          "text"),
+                                      const Text("text"),
                                       Container(
                                         width: 400,
                                         margin: const EdgeInsets.all(5),
@@ -162,7 +175,6 @@ class _ToolbarState extends State<Toolbar> {
                                       ),
                                     ],
                                   ),
-                                  
                                   Column(
                                     children: [
                                       const Text("End type"),
@@ -187,16 +199,14 @@ class _ToolbarState extends State<Toolbar> {
                                                         nodeService)
                                                     : null,
                                             child: Container(
-                                                padding:
-                                                    const EdgeInsets.all(5),
-                                                decoration: const BoxDecoration(
-                                                    color: Colors.blue,
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                10))),
-                                                child:
-                                                    const Text("new choice")),
+                                              padding: const EdgeInsets.all(5),
+                                              decoration: const BoxDecoration(
+                                                  color: Colors.blue,
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(10))),
+                                              child: const Text("new choice"),
+                                            ),
                                           ),
                                         );
                                       }),
@@ -222,8 +232,9 @@ class _ToolbarState extends State<Toolbar> {
                                   ),
                                 ],
                               ),
-                              Row(
+                              Wrap(
                                 // mainAxisSize: MainAxisSize.min,
+                                spacing: 20,
                                 children: [
                                   Column(
                                     children: [
@@ -243,6 +254,19 @@ class _ToolbarState extends State<Toolbar> {
                                           maxLines: 1,
                                         ),
                                       ),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      const Text("Is user speaking"),
+                                      Container(
+                                          width: 100,
+                                          margin: const EdgeInsets.all(5),
+                                          color: Colors.black26,
+                                          child: Checkbox(
+                                            value: isUserSpeaking,
+                                            onChanged: isUserSpeakingChange,
+                                          )),
                                     ],
                                   ),
                                 ],
@@ -278,7 +302,8 @@ class _ToolbarState extends State<Toolbar> {
                                 ),
                                 MaterialButton(
                                   onPressed: nodeService.selectedNode != null
-                                      ? () => switchRemovingEdge(storyService, nodeService)
+                                      ? () => switchRemovingEdge(
+                                          storyService, nodeService)
                                       : null,
                                   child: Container(
                                       padding: const EdgeInsets.all(5),
@@ -294,7 +319,8 @@ class _ToolbarState extends State<Toolbar> {
                                 ),
                                 MaterialButton(
                                   onPressed: nodeService.selectedNode != null
-                                      ? () => removeNode(storyService, nodeService)
+                                      ? () =>
+                                          removeNode(storyService, nodeService)
                                       : null,
                                   child: Container(
                                       padding: const EdgeInsets.all(5),
@@ -316,52 +342,57 @@ class _ToolbarState extends State<Toolbar> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Consumer<StoryServiceProvider>(
-                                    builder: (context, storyService, child) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const Text("File"),
-                                  Row(
+                              builder: (context, storyService, child) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Text("File"),
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 200,
+                                      child: TextField(
+                                        controller: fileNameController,
+                                      ),
+                                    ),
+                                    MaterialButton(
+                                      onPressed: () => storyService
+                                          .loadStory(fileNameController.text),
+                                      child: const Text("Load"),
+                                    )
+                                  ],
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.all(10),
+                                  child: Row(
                                     children: [
-                                      SizedBox(
-                                        width: 200,
-                                        child: TextField(
-                                          controller: fileNameController,
+                                      Container(
+                                        margin:
+                                            const EdgeInsets.only(right: 10),
+                                        child: MaterialButton(
+                                          onPressed: () =>
+                                              storyService.loadStory(
+                                                  fileNameController.text),
+                                          color: Colors.red,
+                                          child:
+                                              const Text("Reset to last save"),
                                         ),
                                       ),
                                       MaterialButton(
-                                        onPressed: () =>  storyService.loadStory(fileNameController.text),
-                                        child: const Text("Load"),
+                                        onPressed: () => storyService
+                                            .saveStory(fileNameController.text),
+                                        color: Colors.green,
+                                        child: const Text("Save"),
                                       )
                                     ],
                                   ),
-                                  Container(
-                                    margin: const EdgeInsets.all(10),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          margin: const EdgeInsets.only(right: 10),
-                                          child: MaterialButton(
-                                            onPressed: () => storyService.loadStory(fileNameController.text),
-                                            color: Colors.red,
-                                            child: const Text("Reset to last save"),
-                                          ),
-                                        ),
-                                        MaterialButton(
-                                          onPressed: () => storyService.saveStory(fileNameController.text),
-                                          color: Colors.green,
-                                          child: const Text("Save"),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  if (fileNameController.text != "")
-                                    Text(
-                                        "last save: ${storyService.getLastSave(fileNameController.text)}"),
-                                ],
-                              );
-                            }
-                          ),
+                                ),
+                                if (fileNameController.text != "")
+                                  Text(
+                                      "last save: ${storyService.getLastSave(fileNameController.text)}"),
+                              ],
+                            );
+                          }),
                         ],
                       )
                     ],
