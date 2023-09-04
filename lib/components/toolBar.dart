@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:story_creator/components/storyNode.dart';
+import 'package:story_creator/models/storyEdge.dart';
 import 'package:story_creator/models/storyItem.dart';
 import 'package:story_creator/services/nodeServiceProvider.dart';
 import 'package:story_creator/services/storyServiceProvider.dart';
@@ -64,6 +66,24 @@ class _ToolbarState extends State<Toolbar> {
     });
   }
 
+  bool validate(StoryServiceProvider storyService,
+      NodeServiceProvider nodeService, StoryItem item) {
+    List<StoryEdge> from = storyService.getEdgesFromSourceToOther(item);
+    List<StoryEdge> to = storyService.getEdgesFromOtherToSource(item);
+    List<StoryItem> childrenItems = [];
+    List<StoryItem> parentItems = [];
+
+    for (StoryEdge edge in from) {
+      childrenItems.add(storyService.currentStory!.items
+          .firstWhere((element) => element.id == edge.to));
+    }
+    for (StoryEdge edge in to) {
+      parentItems.add(storyService.currentStory!.items
+          .firstWhere((element) => element.id == edge.from));
+    }
+    return true;
+  }
+
   void createNode(
       StoryServiceProvider storyService, NodeServiceProvider nodeService) {
     StoryItem newItem = StoryItem.createFromForm(
@@ -74,12 +94,27 @@ class _ToolbarState extends State<Toolbar> {
         minutesDelay: minutesDelayController.text);
     storyService.createNode(newItem, nodeService.selectedNode!);
     nodeService.selectNode(null);
+    if (!validate(storyService, nodeService, newItem)) {
+      storyService.removeNode(newItem);
+      addError("Please provide a valid item");
+    }
   }
 
   void updateNode(
       StoryServiceProvider storyService, NodeServiceProvider nodeService) {
+    StoryItem itemToUpdate = storyService.getItem(nodeService.selectedNode!.id);
+    var saveText = itemToUpdate.text,
+        saveEnd = itemToUpdate.end,
+        saveDelay = itemToUpdate.minutesToWait,
+        saveIsUser = itemToUpdate.isUser;
+
     storyService.updateNode(textController.text, endTypeSelected!,
         minutesDelayController.text, isUserSpeaking, nodeService.selectedNode!);
+
+    if (!validate(storyService, nodeService, nodeService.selectedNode!)) {
+      storyService.updateNode(saveText, saveEnd.name, saveDelay.toString(), saveIsUser, nodeService.selectedNode!);
+      addError("Please provide a valid item");
+    }
     nodeService.clear();
   }
 

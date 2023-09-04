@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:graphview/GraphView.dart';
+import 'package:story_creator/components/storyNode.dart';
 import 'package:story_creator/models/story.dart';
 import 'package:story_creator/models/storyEdge.dart';
 import 'package:story_creator/models/storyItem.dart';
@@ -78,6 +79,10 @@ class StoryServiceProvider extends ChangeNotifier {
     return id;
   }
 
+  StoryItem getItem(String id) {
+    return currentStory!.items.firstWhere((element) => element.id == id);
+  }
+
   createNode(StoryItem item, StoryItem selectedItem) {
     currentStory!.items.add(item);
     currentStory!.edges.add(StoryEdge(selectedItem.id, item.id));
@@ -102,14 +107,20 @@ class StoryServiceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<StoryEdge> getLinkedNodeEdges(StoryItem toSelectedItem) {
+List<StoryEdge> getEdgesFromSourceToOther(StoryItem item) {
     return currentStory!.edges
-        .where((element) => element.to == toSelectedItem.id)
+        .where((element) => element.from == item.id)
+        .toList();
+  }
+
+  List<StoryEdge> getEdgesFromOtherToSource(StoryItem item) {
+    return currentStory!.edges
+        .where((element) => element.to == item.id)
         .toList();
   }
 
   removeLink(StoryItem selectedItem, StoryItem toSelectedItem) {
-    List<StoryEdge> edges = getLinkedNodeEdges(toSelectedItem);
+    List<StoryEdge> edges = getEdgesFromOtherToSource(toSelectedItem);
     if (edges.isNotEmpty) {
       Node fromNode = graph.getNodeUsingId(selectedItem.id);
       Node toNode = graph.getNodeUsingId(toSelectedItem.id);

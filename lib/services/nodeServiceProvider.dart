@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:story_creator/components/storyNode.dart';
 import 'package:story_creator/models/storyItem.dart';
 
 class NodeServiceProvider extends ChangeNotifier {
