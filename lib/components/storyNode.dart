@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:graphview/GraphView.dart';
 import 'package:story_creator/models/storyItem.dart';
 
 class StoryNode extends StatelessWidget {
@@ -22,7 +23,9 @@ class StoryNode extends StatelessWidget {
       case EndType.good:
         return Colors.green.withOpacity(0.8);
       case EndType.not:
-        return item.isUser ? Colors.deepOrange.withOpacity(0.5) : Colors.blue.withOpacity(0.5);
+        return item.isUser
+            ? Colors.deepOrange.withOpacity(0.5)
+            : Colors.blue.withOpacity(0.5);
       default:
         return Colors.grey;
     }
@@ -44,24 +47,55 @@ class StoryNode extends StatelessWidget {
           minHeight: 125,
           maxWidth: 500,
         ),
+        clipBehavior: Clip.antiAlias,
         decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.all(Radius.circular(10))),
         child: Container(
-          padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
               color: color,
               borderRadius: const BorderRadius.all(Radius.circular(10))),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                item.text,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
+              Container(
+                padding: const EdgeInsets.all(5),
+                child: Text(
+                  item.text,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
+              if(item.minutesToWait > 0)
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(5),
+                      color: Colors.black.withOpacity(0.4),
+                      child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        alignment: WrapAlignment.center,
+                        spacing: 10,
+                        children: [
+                          const Icon(
+                            Icons.access_time_rounded,
+                            color: Colors.white,
+                          ),
+                          Text(
+                            "Delay: ${item.minutesToWait}",
+                            style: const TextStyle(color: Colors.white, fontSize: 25),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ),
