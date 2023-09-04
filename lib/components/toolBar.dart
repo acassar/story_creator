@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:story_creator/services/nodeService.dart';
+import 'package:story_creator/services/nodeServiceProvider.dart';
 
 class Toolbar extends StatefulWidget {
   final dynamic createNode;
@@ -92,11 +92,11 @@ class _ToolbarState extends State<Toolbar> {
             error.join("\n"),
             style: const TextStyle(color: Colors.red),
           ),
-          Consumer<NodeService>(builder: (context, nodeService, child) {
+          Consumer<NodeServiceProvider>(builder: (context, nodeService, child) {
             return Text(
                 "choice to: ${nodeService.selectedNode?.id ?? "nothing"}");
           }),
-          Consumer<NodeService>(builder: (context, nodeService, child) {
+          Consumer<NodeServiceProvider>(builder: (context, nodeService, child) {
             return Row(
               children: [
                 Expanded(
@@ -162,9 +162,9 @@ class _ToolbarState extends State<Toolbar> {
                                                   null
                                               ? () => widget.createNode(
                                                     textController.text,
-                                                    choiceTextController.text,
                                                     endTypeSelected,
                                                     minutesDelayController.text,
+                                                    false,
                                                   )
                                               : null,
                                           child: Container(
@@ -182,9 +182,9 @@ class _ToolbarState extends State<Toolbar> {
                                             nodeService.selectedNode != null
                                                 ? () => widget.updateNode(
                                                       textController.text,
-                                                      choiceTextController.text,
                                                       endTypeSelected,
-                                                      minutesDelayController.text
+                                                      minutesDelayController.text,
+                                                      false,
                                                     )
                                                 : null,
                                         child: Container(

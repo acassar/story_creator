@@ -12,7 +12,7 @@ class Story {
 
   Story(this.title, Map<String, dynamic> _data) {
     var firstNode = _data["nodes"][0];
-    entryPoint = StoryItem(firstNode["id"], firstNode["text"], choiceText: firstNode["choice_text"], end: StoryItem.stringToEndType(firstNode["end"]), moreText: convertToListString(firstNode["more_text"]));
+    entryPoint = convertToStoryItem(firstNode);
     for (var item in _data["nodes"]) {
       items.add(convertToStoryItem(item));
     }
@@ -34,13 +34,7 @@ class Story {
   }
 
   StoryItem convertToStoryItem(Map<String, dynamic> data) {
-    StoryItem item = StoryItem(
-      data["id"],
-      data["text"],
-      choiceText: data["choice_text"],
-      end: addEnd(data["end"]),
-      moreText: convertToListString(data["more_text"])
-    );
+    StoryItem item = StoryItem(data["id"], data["text"], end: addEnd(data["end"]), isUser: data["is_user"] == "true" ? true : false, minutesToWait: int.parse(data["minutes_to_wait"]));
     return item;
   }
 }

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:story_creator/screens/storyCreator.dart';
-import 'package:story_creator/services/nodeService.dart';
+import 'package:story_creator/services/nodeServiceProvider.dart';
 
 void main() {
   runApp(
     ChangeNotifierProvider(
       child: const MyApp(),
-      create: (context) => NodeService(),
+      create: (context) => NodeServiceProvider(),
     ),
   );
 }

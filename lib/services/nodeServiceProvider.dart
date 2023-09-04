@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:story_creator/models/storyItem.dart';
 
-class NodeService extends ChangeNotifier {
+class NodeServiceProvider extends ChangeNotifier {
   StoryItem? selectedNode;
   StoryItem? linkToSelection;
   bool isLinkingTo = false;

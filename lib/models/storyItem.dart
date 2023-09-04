@@ -7,25 +7,23 @@ enum EndType { bad, good, not }
 class StoryItem {
   String id;
   String text;
-  List<String> moreText;
-  String choiceText;
   EndType end;
   int minutesToWait;
+  bool isUser;
 
   StoryItem(
     this.id,
     this.text, {
-    required this.choiceText,
     required this.end,
-    required this.moreText,
+    this.isUser = false,
     this.minutesToWait = 0
   });
 
   static createFromForm(
       {required String id,
       required String text,
-      required String choiceText,
       required String minutesDelay,
+      required bool isUser,
       String? end}) {
     List<String> formatedText = text.split("\n");
     List<String> moreText = formatedText.sublist(1);
@@ -33,18 +31,7 @@ class StoryItem {
       (element) => element == "",
     );
     return StoryItem(id, formatedText[0],
-        choiceText: choiceText, moreText: moreText.isEmpty ? [] : moreText, end: end != null ? stringToEndType(end) : EndType.not, minutesToWait: int.parse(minutesDelay));
-  }
-
-  _getMoreTextString() {
-    String s = moreText == ""
-        ? "\n -${moreText.map((e) => "$e").join("\n- ")}"
-        : "none";
-    return s;
-  }
-
-  String? _getMoreTextJson() {
-    return moreText.isNotEmpty ? "[\n\"${moreText!.join("\",\n\"")}\"\n]" : "[]";
+        isUser: isUser, end: end != null ? stringToEndType(end) : EndType.not, minutesToWait: int.parse(minutesDelay));
   }
 
   static stringToEndType(String end) {
@@ -78,9 +65,9 @@ class StoryItem {
   {
     "id": "$id",
     "text": "$text",
-    "choice_text": "$choiceText",
     "end": "${endTypeToString(end) ?? "not"}",
-    "more_text": ${_getMoreTextJson()}
+    "minutes_to_wait": "$minutesToWait",
+    "is_user": "$isUser"
   }
 """;
   }
@@ -91,8 +78,6 @@ class StoryItem {
     ⌚ Show after (minutes): $minutesToWait⌚
     🆔 Id: $id 🆔
     💭 Text: $text 💭
-    📲 Choice text: $choiceText 📲
-    📋 More Text: ${_getMoreTextString()} 📋
   """;
   }
 }

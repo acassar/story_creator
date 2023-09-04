@@ -7,7 +7,7 @@ import 'package:story_creator/components/toolBar.dart';
 import 'package:story_creator/models/storyEdge.dart';
 import 'package:story_creator/models/story.dart';
 import 'package:story_creator/models/storyItem.dart';
-import 'package:story_creator/services/nodeService.dart';
+import 'package:story_creator/services/nodeServiceProvider.dart';
 import 'package:story_creator/services/storyService.dart';
 import 'package:uuid/uuid.dart';
 
@@ -55,21 +55,21 @@ class _StoryCreatorState extends State<StoryCreator> {
 
   nodeClickCallback(StoryItem item) {
     // setState(() {});
-    Provider.of<NodeService>(context, listen: false).selectNode(item);
+    Provider.of<NodeServiceProvider>(context, listen: false).selectNode(item);
   }
 
   bool isIdExist(String id) {
     return story!.items.any((element) => element.id == id);
   }
 
-  createNode(String text, String choiceText, String endTypeSelected, String minutesDelay) {
+  createNode(String text, String endTypeSelected, String minutesDelay, bool isUser) {
     String id = const Uuid().v4();
     while (isIdExist(id)) {
       id = const Uuid().v4();
     }
-    NodeService nodeService = Provider.of<NodeService>(context, listen: false);
+    NodeServiceProvider nodeService = Provider.of<NodeServiceProvider>(context, listen: false);
     StoryItem newItem = StoryItem.createFromForm(
-        id: id, text: text, choiceText: choiceText, end: endTypeSelected, minutesDelay: minutesDelay);
+        id: id, text: text, isUser: isUser, end: endTypeSelected, minutesDelay: minutesDelay);
     setState(() {
       story!.items.add(newItem);
       story!.edges.add(StoryEdge(nodeService.selectedNode!.id, id));
@@ -79,18 +79,18 @@ class _StoryCreatorState extends State<StoryCreator> {
   }
 
   setLinkToSelection(StoryItem item) {
-    NodeService nodeService = Provider.of<NodeService>(context, listen: false);
+    NodeServiceProvider nodeService = Provider.of<NodeServiceProvider>(context, listen: false);
     nodeService.selectLinkTo(item);
   }
 
   List<StoryEdge> getLinkedNodeEdges() {
-    NodeService nodeService = Provider.of<NodeService>(context, listen: false);
+    NodeServiceProvider nodeService = Provider.of<NodeServiceProvider>(context, listen: false);
     StoryItem linked = nodeService.linkToSelection!;
     return story!.edges.where((element) => element.to == linked.id).toList();
   }
 
   removeLink(dynamic errorCallback) {
-    NodeService nodeService = Provider.of<NodeService>(context, listen: false);
+    NodeServiceProvider nodeService = Provider.of<NodeServiceProvider>(context, listen: false);
     List<StoryEdge> edges = getLinkedNodeEdges();
     if (edges.isNotEmpty) {
       Node fromNode = graph.getNodeUsingId(nodeService.selectedNode!.id);
@@ -115,7 +115,7 @@ class _StoryCreatorState extends State<StoryCreator> {
   }
 
   addLink() {
-    NodeService nodeService = Provider.of<NodeService>(context, listen: false);
+    NodeServiceProvider nodeService = Provider.of<NodeServiceProvider>(context, listen: false);
     story!.edges.add(StoryEdge(
         nodeService.selectedNode!.id, nodeService.linkToSelection!.id));
     graph.addEdge(Node.Id(nodeService.selectedNode!.id),
@@ -123,17 +123,17 @@ class _StoryCreatorState extends State<StoryCreator> {
   }
 
   swicthLinkTo() {
-    NodeService nodeService = Provider.of<NodeService>(context, listen: false);
+    NodeServiceProvider nodeService = Provider.of<NodeServiceProvider>(context, listen: false);
     nodeService.linkToButtonClicked(addLink);
   }
 
   switchRemovingEdge(dynamic errorCallback) {
-    NodeService nodeService = Provider.of<NodeService>(context, listen: false);
+    NodeServiceProvider nodeService = Provider.of<NodeServiceProvider>(context, listen: false);
     nodeService.removeEdgeButtonClicked(removeLink, errorCallback);
   }
 
   removeNode(dynamic errorCallback) {
-    NodeService nodeService = Provider.of<NodeService>(context, listen: false);
+    NodeServiceProvider nodeService = Provider.of<NodeServiceProvider>(context, listen: false);
     String selectedNodeID = nodeService.selectedNode!.id;
     if (story!.edges.any(
       (element) => element.from == selectedNodeID,
@@ -151,13 +151,13 @@ class _StoryCreatorState extends State<StoryCreator> {
     }
   }
 
-  updateNode(String text, String choiceText, String endTypeSelected, String minutesDelay) {
-    NodeService nodeService = Provider.of<NodeService>(context, listen: false);
+  updateNode(String text, String endTypeSelected, String minutesDelay, bool isUser) {
+    NodeServiceProvider nodeService = Provider.of<NodeServiceProvider>(context, listen: false);
     StoryItem item = story!.items
         .firstWhere((element) => element.id == nodeService.selectedNode!.id);
     item.text = text;
-    item.choiceText = choiceText;
     item.end = StoryItem.stringToEndType(endTypeSelected);
+    item.isUser = isUser;
     item.minutesToWait = int.parse(minutesDelay);
     nodeService.clear();
     setState(() {});
@@ -187,7 +187,7 @@ class _StoryCreatorState extends State<StoryCreator> {
               maxScale: 5.6,
               child: Column(
                 children: [
-                  Consumer<NodeService>(
+                  Consumer<NodeServiceProvider>(
                       builder: (context, nodeService, child) {
                     return GraphView(
                       graph: graph,

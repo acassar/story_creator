@@ -2,25 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:story_creator/models/story.dart';
+import 'package:story_creator/models/storyItem.dart';
 
 class StoryService {
   String folderName = "example";
-  String defaultFileContent = """
-{
-  "nodes": [
-    {
-      "id": "start",
-      "text": "Story start",
-      "more_text": [],
-      "end": "not",
-      "choice_text": ""
-    }
-  ],
-  "edges": [
-
-  ]
-}
-""";
+  StoryItem defaultFileContent = StoryItem("start", "Story start",
+      end: EndType.not, isUser: false, minutesToWait: 0);
 
   String getLastSave(String fileName) {
     String path = "stories/$folderName/$fileName.json";
@@ -29,13 +16,18 @@ class StoryService {
 
   void saveStory(Story story, String fileName) {
     String path = "stories/$folderName/$fileName.json";
+    writeFile(story.items.map((element) => element.toJson()).join(","),
+        story.edges.map((element) => element.toJson()).join(","), path);
+  }
+
+  void writeFile(nodes, edges, path) {
     File(path).writeAsStringSync("""
 {
   "nodes": [
-    ${story.items.map((element) => element.toJson()).join(",")}
+    ${nodes}
   ],
   "edges": [
-    ${story.edges.map((element) => element.toJson()).join(",")}
+    ${edges}
   ]
 }
 """);
@@ -54,7 +46,7 @@ class StoryService {
     bool exist = await File(path).exists();
     File file = File(path);
     if (!exist) {
-      await file.writeAsString(defaultFileContent);
+      writeFile(defaultFileContent.toJson(), "", path);
     }
     final String response = await file.readAsString();
     return jsonDecode(response);

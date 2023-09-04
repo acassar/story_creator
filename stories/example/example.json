@@ -1,14 +1,15 @@
 {
   "nodes": [
-    {
-      "id": "start",
-      "text": "Story start",
-      "more_text": [],
-      "end": "not",
-      "choice_text": ""
-    }
+      {
+    "id": "start",
+    "text": "Story start",
+    "end": "not",
+    "minutes_to_wait": "0",
+    "is_user": "false"
+  }
+
   ],
   "edges": [
-
+    
   ]
 }
