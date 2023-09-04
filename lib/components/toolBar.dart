@@ -79,7 +79,7 @@ class _ToolbarState extends State<Toolbar> {
   void updateNode(
       StoryServiceProvider storyService, NodeServiceProvider nodeService) {
     storyService.updateNode(textController.text, endTypeSelected!,
-        minutesDelayController.text, false, nodeService.selectedNode!);
+        minutesDelayController.text, isUserSpeaking, nodeService.selectedNode!);
     nodeService.clear();
   }
 
