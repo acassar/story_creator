@@ -9,9 +9,9 @@
   }
 ,  {
     "id": "2f1e0b7b-5dda-4b5f-a3ee-a744563eb9af",
-    "text": "test",
+    "text": "test de texte assez long pour voir si la taille du bloc augmente ou non, si les courleurs sont bonnes et tout autre eventuel element graphique",
     "end": "not",
-    "minutes_to_wait": "30",
+    "minutes_to_wait": "0",
     "is_user": "false"
   }
 ,  {
@@ -25,6 +25,13 @@
     "id": "4b143c9b-1d29-45ac-95a9-058b63982dab",
     "text": "test2",
     "end": "bad",
+    "minutes_to_wait": "30",
+    "is_user": "false"
+  }
+,  {
+    "id": "73696f50-4db7-457c-9c4f-bdcf60261e84",
+    "text": "test ",
+    "end": "not",
     "minutes_to_wait": "30",
     "is_user": "false"
   }
@@ -42,6 +49,10 @@
 ,  {
     "from": "2f1e0b7b-5dda-4b5f-a3ee-a744563eb9af",
     "to": "4b143c9b-1d29-45ac-95a9-058b63982dab"
+  }
+,  {
+    "from": "4b143c9b-1d29-45ac-95a9-058b63982dab",
+    "to": "73696f50-4db7-457c-9c4f-bdcf60261e84"
   }
 
   ]

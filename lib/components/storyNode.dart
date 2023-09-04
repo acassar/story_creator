@@ -22,7 +22,7 @@ class StoryNode extends StatelessWidget {
       case EndType.good:
         return Colors.green.withOpacity(0.8);
       case EndType.not:
-        return Colors.blue;
+        return Colors.blue.withOpacity(0.5);
       default:
         return Colors.grey;
     }
@@ -39,6 +39,11 @@ class StoryNode extends StatelessWidget {
       onDoubleTap: () => callack(item),
       onTap: () => singleClick(item),
       child: Container(
+        constraints: const BoxConstraints(
+          minWidth: 300,
+          minHeight: 125,
+          maxWidth: 500,
+        ),
         decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -50,8 +55,12 @@ class StoryNode extends StatelessWidget {
           child: Column(
             children: [
               Text(
-                item.toString(),
+                item.text,
                 textAlign: TextAlign.center,
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
               ),
             ],
           ),
