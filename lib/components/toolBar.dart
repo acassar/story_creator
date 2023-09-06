@@ -40,6 +40,7 @@ class _ToolbarState extends State<Toolbar> {
   bool isUserSpeaking = false;
   double secondaryInputWidth = 140;
   Color inputColor = const Color(0xFF6200EE);
+  EdgeInsets cardPad = const EdgeInsets.all(10);
 
   getInputDecoration(String label, IconData icon) {
     return InputDecoration(
@@ -183,7 +184,12 @@ class _ToolbarState extends State<Toolbar> {
   }
 
   void goToNode(StoryItem item, StoryServiceProvider storyServiceProvider) {
-    storyServiceProvider.goToNode(storyServiceProvider.getNodeFromId(item.id,), MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
+    storyServiceProvider.goToNode(
+        storyServiceProvider.getNodeFromId(
+          item.id,
+        ),
+        MediaQuery.of(context).size.width,
+        MediaQuery.of(context).size.height);
   }
 
   @override
@@ -198,16 +204,25 @@ class _ToolbarState extends State<Toolbar> {
             error.join("\n"),
             style: const TextStyle(color: Colors.red),
           ),
-          Consumer2<NodeServiceProvider, StoryServiceProvider>(builder: (context, nodeService, storyService, child) {
+          Consumer2<NodeServiceProvider, StoryServiceProvider>(
+              builder: (context, nodeService, storyService, child) {
             return GestureDetector(
-              onTap: () => nodeService.selectedNode != null ? goToNode(nodeService.selectedNode!, storyService) : null,
+              onTap: () => nodeService.selectedNode != null
+                  ? goToNode(nodeService.selectedNode!, storyService)
+                  : null,
               child: Container(
                 padding: const EdgeInsets.only(bottom: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text("node selected: "),
-                    Text(nodeService.selectedNode?.text ?? "nothing", style: TextStyle(color: inputColor, fontWeight: FontWeight.bold, fontSize: 20),),
+                    Text(
+                      nodeService.selectedNode?.text ?? "nothing",
+                      style: TextStyle(
+                          color: inputColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20),
+                    ),
                   ],
                 ),
               ),
@@ -227,7 +242,7 @@ class _ToolbarState extends State<Toolbar> {
                         children: [
                           Card(
                             child: Container(
-                              padding: const EdgeInsets.all(10),
+                              padding: cardPad,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -360,117 +375,111 @@ class _ToolbarState extends State<Toolbar> {
                             return Wrap(
                               runSpacing: 10,
                               children: [
-                                MaterialButton(
-                                  onPressed: nodeService.selectedNode != null
+                                CustomButton(
+                                  callback: nodeService.selectedNode != null
                                       ? () => switchLinkTo(
                                           storyService, nodeService)
                                       : null,
-                                  child: Container(
-                                      padding: const EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                          color: nodeService.isLinkingTo
+                                      color: nodeService.isLinkingTo
                                               ? Colors.amber
                                               : Colors.blue,
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(10))),
-                                      child: Text(nodeService.isLinkingTo
+                                  text: nodeService.isLinkingTo
                                           ? "submit link"
-                                          : "link to")),
+                                          : "link to",
+                                          disabled: false,
                                 ),
-                                MaterialButton(
-                                  onPressed: nodeService.selectedNode != null
+                                CustomButton(
+                                  callback: nodeService.selectedNode != null
                                       ? () => switchRemovingEdge(
                                           storyService, nodeService)
                                       : null,
-                                  child: Container(
-                                      padding: const EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
+                                      text: nodeService.isRemovingEdge
+                                          ? "submit remove edge"
+                                          : "Remove edge",
                                           color: nodeService.isRemovingEdge
                                               ? Colors.amber
                                               : Colors.blue,
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(10))),
-                                      child: Text(nodeService.isRemovingEdge
-                                          ? "submit remove edge"
-                                          : "Remove edge")),
+                                  disabled: false,
                                 ),
-                                MaterialButton(
-                                  onPressed: nodeService.selectedNode != null
+                                CustomButton(
+                                  callback: nodeService.selectedNode != null
                                       ? () =>
                                           removeNode(storyService, nodeService)
                                       : null,
-                                  child: Container(
-                                      padding: const EdgeInsets.all(5),
-                                      decoration: const BoxDecoration(
-                                          color: Colors.red,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10))),
-                                      child: Text(nodeService.isRemovingEdge
+                                      text: nodeService.isRemovingEdge
                                           ? "submit remove"
-                                          : "Remove (warning: no confirmation)")),
+                                          : "Remove (warning: no confirmation)",
+                                          color: Colors.red,
+                                  disabled: false,
                                 ),
                               ],
                             );
                           }),
                         ],
                       ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Consumer<StoryServiceProvider>(
-                              builder: (context, storyService, child) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Text("File"),
-                                Row(
+                      Card(
+                        child: Container(
+                          padding: cardPad,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Consumer<StoryServiceProvider>(
+                                  builder: (context, storyService, child) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    SizedBox(
-                                      width: 200,
-                                      child: TextField(
-                                        controller: fileNameController,
+                                    const Text("File"),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 200,
+                                          child: TextField(
+                                            decoration: getInputDecoration(
+                                                "File", Icons.file_copy),
+                                            controller: fileNameController,
+                                          ),
+                                        ),
+                                        CustomButton(
+                                          callback: () => storyService
+                                              .loadStory(fileNameController.text),
+                                          text: "Load",
+                                          color: inputColor,
+                                          disabled: false,
+                                        )
+                                      ],
+                                    ),
+                                    Container(
+                                      margin: const EdgeInsets.all(10),
+                                      child: Row(
+                                        children: [
+                                          CustomButton(
+                                            callback: () =>
+                                                storyService.loadStory(
+                                                    fileNameController.text),
+                                            color: Colors.red,
+                                            text: "Reset to last save",
+                                            disabled: false,
+                                          ),
+                                          CustomButton(
+                                            callback: () => storyService
+                                                .saveStory(fileNameController.text),
+                                            color: Colors.green,
+                                            text: "Save",
+                                            disabled: false,
+                                          )
+                                        ],
                                       ),
                                     ),
-                                    MaterialButton(
-                                      onPressed: () => storyService
-                                          .loadStory(fileNameController.text),
-                                      child: const Text("Load"),
-                                    )
+                                    if (fileNameController.text != "")
+                                      Text(
+                                          "last save: ${storyService.getLastSave(fileNameController.text)}"),
                                   ],
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.all(10),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        margin:
-                                            const EdgeInsets.only(right: 10),
-                                        child: MaterialButton(
-                                          onPressed: () =>
-                                              storyService.loadStory(
-                                                  fileNameController.text),
-                                          color: Colors.red,
-                                          child:
-                                              const Text("Reset to last save"),
-                                        ),
-                                      ),
-                                      MaterialButton(
-                                        onPressed: () => storyService
-                                            .saveStory(fileNameController.text),
-                                        color: Colors.green,
-                                        child: const Text("Save"),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                if (fileNameController.text != "")
-                                  Text(
-                                      "last save: ${storyService.getLastSave(fileNameController.text)}"),
-                              ],
-                            );
-                          }),
-                        ],
+                                );
+                              }),
+                            ],
+                          ),
+                        ),
                       )
                     ],
                   ),
