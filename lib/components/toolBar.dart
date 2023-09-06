@@ -81,6 +81,7 @@ class _ToolbarState extends State<Toolbar> {
       parentItems.add(storyService.currentStory!.items
           .firstWhere((element) => element.id == edge.from));
     }
+    //TODO
     return true;
   }
 
