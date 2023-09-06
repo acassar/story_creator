@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:graphview/GraphView.dart';
 import 'package:provider/provider.dart';
 import 'package:story_creator/components/storyNode.dart';
 import 'package:story_creator/models/storyEdge.dart';
@@ -38,6 +39,24 @@ class _ToolbarState extends State<Toolbar> {
   ];
   String? endTypeSelected;
   bool isUserSpeaking = false;
+  double secondaryInputWidth = 140;
+  Color inputColor = const Color(0xFF6200EE);
+
+  getInputDecoration(String label, IconData icon) {
+    return InputDecoration(
+      suffixIcon: Icon(icon),
+      labelText: label,
+      labelStyle: TextStyle(
+        color: inputColor,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        borderSide: BorderSide(
+          color: inputColor,
+        ),
+      ),
+    );
+  }
 
   onEndTypeSelect(dynamic value) {
     setState(() {
@@ -113,7 +132,8 @@ class _ToolbarState extends State<Toolbar> {
         minutesDelayController.text, isUserSpeaking, nodeService.selectedNode!);
 
     if (!validate(storyService, nodeService, nodeService.selectedNode!)) {
-      storyService.updateNode(saveText, saveEnd.name, saveDelay.toString(), saveIsUser, nodeService.selectedNode!);
+      storyService.updateNode(saveText, saveEnd.name, saveDelay.toString(),
+          saveIsUser, nodeService.selectedNode!);
       addError("Please provide a valid item");
     }
     nodeService.clear();
@@ -191,123 +211,130 @@ class _ToolbarState extends State<Toolbar> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
+                          Card(
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Column(
+                                  Row(
+                                    mainAxisSize: MainAxisSize.max,
                                     children: [
-                                      const Text("text"),
-                                      Container(
-                                        width: 400,
-                                        margin: const EdgeInsets.all(5),
-                                        color: Colors.black26,
-                                        child: TextField(
-                                          controller: textController,
-                                          maxLines: 3,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      const Text("End type"),
-                                      DropdownButton(
-                                          items: dropdownItems,
-                                          onChanged: onEndTypeSelect,
-                                          value: endTypeSelected),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      Consumer<StoryServiceProvider>(builder:
-                                          (context, storyService, child) {
-                                        return Container(
-                                          margin:
-                                              const EdgeInsets.only(bottom: 10),
-                                          child: MaterialButton(
-                                            onPressed:
-                                                nodeService.selectedNode != null
-                                                    ? () => createNode(
-                                                        storyService,
-                                                        nodeService)
-                                                    : null,
-                                            child: Container(
-                                              padding: const EdgeInsets.all(5),
-                                              decoration: const BoxDecoration(
-                                                  color: Colors.blue,
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(10))),
-                                              child: const Text("new choice"),
+                                      Column(
+                                        children: [
+                                          Container(
+                                            width: 400,
+                                            margin: const EdgeInsets.all(5),
+                                            child: TextField(
+                                              decoration: getInputDecoration(
+                                                  "content",
+                                                  Icons.textsms_rounded),
+                                              controller: textController,
+                                              maxLines: 5,
                                             ),
                                           ),
-                                        );
-                                      }),
-                                      Consumer<StoryServiceProvider>(builder:
-                                          (context, storyService, child) {
-                                        return MaterialButton(
-                                          onPressed:
-                                              nodeService.selectedNode != null
-                                                  ? () => updateNode(
-                                                      storyService, nodeService)
-                                                  : null,
-                                          child: Container(
-                                              padding: const EdgeInsets.all(5),
-                                              decoration: const BoxDecoration(
-                                                  color: Colors.blue,
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(10))),
-                                              child: const Text("update node")),
-                                        );
-                                      }),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Wrap(
-                                // mainAxisSize: MainAxisSize.min,
-                                spacing: 20,
-                                children: [
-                                  Column(
-                                    children: [
-                                      const Text(
-                                          "Minutes delay before display"),
+                                        ],
+                                      ),
+                                      Column(
+                                        children: [
+                                          Column(
+                                            children: [
+                                              SizedBox(
+                                                width: secondaryInputWidth,
+                                                child: DropdownButtonFormField(
+                                                    decoration: getInputDecoration(
+                                                        "End type",
+                                                        Icons
+                                                            .account_tree_sharp),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    padding:
+                                                        const EdgeInsets.all(5),
+                                                    items: dropdownItems,
+                                                    focusColor:
+                                                        Colors.transparent,
+                                                    onChanged: onEndTypeSelect,
+                                                    value: endTypeSelected),
+                                              ),
+                                            ],
+                                          ),
+                                          Container(
+                                            width: secondaryInputWidth,
+                                            margin: const EdgeInsets.all(5),
+                                            child: TextField(
+                                              decoration: getInputDecoration(
+                                                  "Minutes delay", Icons.timer),
+                                              inputFormatters: <TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              controller:
+                                                  minutesDelayController,
+                                              maxLines: 1,
+                                            ),
+                                          ),
+                                          Column(
+                                            children: [
+                                              Container(
+                                                  width: secondaryInputWidth,
+                                                  margin:
+                                                      const EdgeInsets.all(5),
+                                                  child: CheckboxListTile(
+                                                    title: Text(
+                                                      "Choice",
+                                                      style: TextStyle(
+                                                        color: inputColor,
+                                                      ),
+                                                    ),
+                                                    value: isUserSpeaking,
+                                                    onChanged:
+                                                        isUserSpeakingChange,
+                                                  )),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                       Container(
-                                        width: 100,
-                                        margin: const EdgeInsets.all(5),
-                                        color: Colors.black26,
-                                        child: TextField(
-                                          inputFormatters: <TextInputFormatter>[
-                                            FilteringTextInputFormatter
-                                                .digitsOnly
+                                        padding: const EdgeInsets.all(20),
+                                        child: Column(
+                                          children: [
+                                            Consumer<StoryServiceProvider>(
+                                                builder: (context, storyService,
+                                                    child) {
+                                              return CustomButton(
+                                                color: inputColor,
+                                                text: "Create node",
+                                                disabled:
+                                                    nodeService.selectedNode ==
+                                                        null,
+                                                callback: () => createNode(
+                                                    storyService, nodeService),
+                                              );
+                                            }),
+                                            Consumer<StoryServiceProvider>(
+                                                builder: (context, storyService,
+                                                    child) {
+                                              return CustomButton(
+                                                color: const Color(0xff5DA9E9),
+                                                text: "Update node",
+                                                disabled:
+                                                    nodeService.selectedNode ==
+                                                        null,
+                                                callback: () => updateNode(
+                                                    storyService, nodeService),
+                                              );
+                                            }),
                                           ],
-                                          keyboardType: TextInputType.number,
-                                          controller: minutesDelayController,
-                                          maxLines: 1,
                                         ),
                                       ),
                                     ],
                                   ),
-                                  Column(
-                                    children: [
-                                      const Text("Is user speaking"),
-                                      Container(
-                                          width: 100,
-                                          margin: const EdgeInsets.all(5),
-                                          color: Colors.black26,
-                                          child: Checkbox(
-                                            value: isUserSpeaking,
-                                            onChanged: isUserSpeakingChange,
-                                          )),
-                                    ],
-                                  ),
                                 ],
                               ),
-                            ],
+                            ),
                           ),
                         ],
                       ),
@@ -440,5 +467,40 @@ class _ToolbarState extends State<Toolbar> {
         ],
       ),
     );
+  }
+}
+
+class CustomButton extends StatelessWidget {
+  final bool disabled;
+  final dynamic callback;
+  final String text;
+  final Color color;
+  const CustomButton(
+      {super.key,
+      required this.disabled,
+      required this.callback,
+      required this.text, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(10),
+      child: MaterialButton(
+        disabledColor: Colors.grey,
+        color: color,
+        shape: const ContinuousRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
+        onPressed: !disabled ? callback : null,
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: const BoxDecoration(
+              // color: Colors.blue,
+              borderRadius: BorderRadius.all(Radius.circular(10))),
+          child: Text(text, style: const TextStyle(color: Colors.white),),
+        ),
+      ),
+    );
+    ;
   }
 }
