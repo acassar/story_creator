@@ -196,8 +196,16 @@ class _ToolbarState extends State<Toolbar> {
             style: const TextStyle(color: Colors.red),
           ),
           Consumer<NodeServiceProvider>(builder: (context, nodeService, child) {
-            return Text(
-                "node selected: ${nodeService.selectedNode?.id ?? "nothing"}");
+            return Container(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("node selected: "),
+                  Text(nodeService.selectedNode?.text ?? "nothing", style: TextStyle(color: inputColor, fontWeight: FontWeight.bold, fontSize: 20),),
+                ],
+              ),
+            );
           }),
           Consumer<NodeServiceProvider>(builder: (context, nodeService, child) {
             return Row(
@@ -479,7 +487,8 @@ class CustomButton extends StatelessWidget {
       {super.key,
       required this.disabled,
       required this.callback,
-      required this.text, required this.color});
+      required this.text,
+      required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -497,7 +506,10 @@ class CustomButton extends StatelessWidget {
           decoration: const BoxDecoration(
               // color: Colors.blue,
               borderRadius: BorderRadius.all(Radius.circular(10))),
-          child: Text(text, style: const TextStyle(color: Colors.white),),
+          child: Text(
+            text,
+            style: const TextStyle(color: Colors.white),
+          ),
         ),
       ),
     );
