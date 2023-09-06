@@ -34,7 +34,8 @@ class _StoryCreatorState extends State<StoryCreator> {
   }
 
   StoryItem findNode(String id, StoryServiceProvider storyServiceProvider) {
-    return storyServiceProvider.currentStory!.items.firstWhere((element) => element.id == id);
+    return storyServiceProvider.currentStory!.items
+        .firstWhere((element) => element.id == id);
   }
 
   nodeClickCallback(StoryItem item) {
@@ -49,54 +50,55 @@ class _StoryCreatorState extends State<StoryCreator> {
   @override
   Widget build(BuildContext context) {
     return Consumer<StoryServiceProvider>(
-      builder: (context, storyService, child) {
-        if (storyService.currentStory == null) {
-          storyService.loadStory(defaultFileName);
-          return const LinearProgressIndicator();
-        }
-        return Column(
-          children: [
-            Toolbar(
-              defaultFileName: defaultFileName,
-            ),
-            Flexible(
-              child: InteractiveViewer(
-                  constrained: false,
-                  boundaryMargin: const EdgeInsets.all(double.infinity),
-                  minScale: 0.01,
-                  maxScale: 5.6,
-                  child: Column(
-                    children: [
-                      Consumer<NodeServiceProvider>(
-                          builder: (context, nodeService, child) {
-                        return GraphView(
-                          graph: storyService.graph,
-                          algorithm: SugiyamaAlgorithm(builder),
-                          paint: Paint()
-                            ..color = Colors.green
-                            ..strokeWidth = 1
-                            ..style = PaintingStyle.stroke,
-                          builder: (Node node) {
-                            // I can decide what widget should be shown here based on the id
-                            var id = node.key!.value;
-                            return StoryNode(
-                              item: findNode(id, storyService),
-                              callack: nodeClickCallback,
-                              key: Key(id),
-                              selected: nodeService.selectedNode?.id == id,
-                              linkToSelected:
-                                  nodeService.linkToSelection?.id == id,
-                              singleClick: setLinkToSelection,
-                            );
-                          },
-                        );
-                      }),
-                    ],
-                  )),
-            ),
-          ],
-        );
+        builder: (context, storyService, child) {
+      if (storyService.currentStory == null) {
+        storyService.loadStory(defaultFileName);
+        return const LinearProgressIndicator();
       }
-    );
+      return Column(
+        children: [
+          Toolbar(
+            defaultFileName: defaultFileName,
+          ),
+          Flexible(
+            child: InteractiveViewer(
+                transformationController: storyService.initTransformationController(),
+                constrained: false,
+                boundaryMargin: const EdgeInsets.all(double.infinity),
+                minScale: 0.01,
+                maxScale: 5.6,
+                child: Column(
+                  children: [
+                    Consumer<NodeServiceProvider>(
+                        builder: (context, nodeService, child) {
+                      return GraphView(
+                        animated: true,
+                        graph: storyService.graph,
+                        algorithm: SugiyamaAlgorithm(builder),
+                        paint: Paint()
+                          ..color = Colors.green
+                          ..strokeWidth = 1
+                          ..style = PaintingStyle.stroke,
+                        builder: (Node node) {
+                          // I can decide what widget should be shown here based on the id
+                          var id = node.key!.value;
+                          return StoryNode(
+                            item: findNode(id, storyService),
+                            callack: nodeClickCallback,
+                            key: Key(id),
+                            selected: nodeService.selectedNode?.id == id,
+                            linkToSelected:
+                                nodeService.linkToSelection?.id == id,
+                            singleClick: setLinkToSelection,
+                          );
+                        },
+                      );
+                    }),
+                  ],
+                )),
+          ),
+        ],
+      );
+    });
   }
 }

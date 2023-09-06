@@ -9,7 +9,7 @@ class NodeServiceProvider extends ChangeNotifier {
   StoryItem? linkToSelection;
   bool isLinkingTo = false;
   bool isRemovingEdge = false;
-
+  
   selectNode(StoryItem? item) {
     if (item == selectedNode) {
       item = null;

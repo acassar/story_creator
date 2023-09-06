@@ -10,7 +10,6 @@ import 'package:story_creator/services/storyServiceProvider.dart';
 
 class Toolbar extends StatefulWidget {
   final String defaultFileName;
-
   const Toolbar({super.key, required this.defaultFileName});
 
   @override
@@ -183,6 +182,10 @@ class _ToolbarState extends State<Toolbar> {
     });
   }
 
+  void goToNode(StoryItem item, StoryServiceProvider storyServiceProvider) {
+    storyServiceProvider.goToNode(storyServiceProvider.getNodeFromId(item.id,), MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -195,15 +198,18 @@ class _ToolbarState extends State<Toolbar> {
             error.join("\n"),
             style: const TextStyle(color: Colors.red),
           ),
-          Consumer<NodeServiceProvider>(builder: (context, nodeService, child) {
-            return Container(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("node selected: "),
-                  Text(nodeService.selectedNode?.text ?? "nothing", style: TextStyle(color: inputColor, fontWeight: FontWeight.bold, fontSize: 20),),
-                ],
+          Consumer2<NodeServiceProvider, StoryServiceProvider>(builder: (context, nodeService, storyService, child) {
+            return GestureDetector(
+              onTap: () => nodeService.selectedNode != null ? goToNode(nodeService.selectedNode!, storyService) : null,
+              child: Container(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("node selected: "),
+                    Text(nodeService.selectedNode?.text ?? "nothing", style: TextStyle(color: inputColor, fontWeight: FontWeight.bold, fontSize: 20),),
+                  ],
+                ),
               ),
             );
           }),

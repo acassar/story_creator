@@ -14,6 +14,32 @@ class StoryServiceProvider extends ChangeNotifier {
   StoryItem defaultFileContent = StoryItem("start", "Story start",
       end: EndType.not, isUser: false, minutesToWait: 0);
   Graph graph = Graph()..isTree = true;
+  TransformationController? _transformationController;
+  late Matrix4 transformationControllerDefaultValue;
+
+  Node getNodeFromId(String id) {
+    return graph.getNodeUsingId(id);
+  }
+
+  TransformationController initTransformationController() {
+    _transformationController ??= TransformationController();
+    transformationControllerDefaultValue = _transformationController!.value;
+    return _transformationController!;
+  }
+
+  goToNode(Node node, double screenWidth, double screenHeight) {
+    const zoomFactor = 0.5;
+    final xTranslate = (-node.position.dx + screenWidth - 300) * zoomFactor;
+    final yTranslate = (-node.position.dy + screenHeight / 2) * zoomFactor;
+
+    _transformationController!.value.setEntry(0, 0, zoomFactor);
+    _transformationController!.value.setEntry(1, 1, zoomFactor);
+    _transformationController!.value.setEntry(2, 2, zoomFactor);
+    _transformationController!.value.setEntry(0, 3, xTranslate);
+    _transformationController!.value.setEntry(1, 3, yTranslate);
+    notifyListeners();
+    _transformationController!.notifyListeners();
+  }
 
   Story? currentStory;
 
@@ -107,7 +133,7 @@ class StoryServiceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-List<StoryEdge> getEdgesFromSourceToOther(StoryItem item) {
+  List<StoryEdge> getEdgesFromSourceToOther(StoryItem item) {
     return currentStory!.edges
         .where((element) => element.from == item.id)
         .toList();
