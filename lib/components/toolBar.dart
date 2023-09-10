@@ -102,10 +102,7 @@ class _ToolbarState extends State<Toolbar> {
     storyService.createNode(newItem, nodeService.selectedNode!);
     nodeService.selectNode(null);
     try {
-      if (!validationService.validate(newItem)) {
-        storyService.removeNode(newItem);
-        addError("Please provide a valid item");
-      }
+      validationService.validate(newItem);
     } catch (error) {
       addError(error.toString());
       storyService.removeNode(newItem);
@@ -124,11 +121,7 @@ class _ToolbarState extends State<Toolbar> {
         minutesDelayController.text, isUserSpeaking, nodeService.selectedNode!);
 
     try {
-      if (!validationService.validate(nodeService.selectedNode!)) {
-        storyService.updateNode(saveText, saveEnd.name, saveDelay.toString(),
-            saveIsUser, nodeService.selectedNode!);
-        addError("Please provide a valid item");
-      }
+      validationService.validate(nodeService.selectedNode!);
     } catch (error) {
       addError(error.toString());
       storyService.updateNode(saveText, saveEnd.name, saveDelay.toString(),
@@ -374,8 +367,10 @@ class _ToolbarState extends State<Toolbar> {
                               runSpacing: 10,
                               children: [
                                 CustomButton(
-                                  callback: () => goToNode(storyService.currentStory!.items[0], storyService),
-                                  color:  Colors.purple,
+                                  callback: () => goToNode(
+                                      storyService.currentStory!.items[0],
+                                      storyService),
+                                  color: Colors.purple,
                                   text: "Go to first node",
                                   disabled: false,
                                 ),

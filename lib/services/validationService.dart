@@ -11,7 +11,7 @@ class ValidationService {
 
   ValidationService(this.storyService, this.nodeService);
 
-  bool validate(StoryItem item) {
+  void validate(StoryItem item) {
     List<StoryEdge> from = storyService.getEdgesFromSourceToOther(item);
     List<StoryEdge> to = storyService.getEdgesFromOtherToSource(item);
     List<StoryItem> childrenItems = [];
@@ -27,7 +27,6 @@ class ValidationService {
     for (var element in rules) {
       element.validate();
     }
-    return true;
   }
 
   static void fillChildren(List<StoryItem> items, List<StoryEdge> from,
