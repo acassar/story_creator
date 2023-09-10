@@ -119,13 +119,13 @@
   }
 ,  {
     "id": "dd46e6a3-2908-4a5b-990c-81b6f89c9152",
-    "text": "test",
+    "text": "Un choix avec une condition d'activation",
     "end": "not",
     "minutes_to_wait": "0",
-    "is_user": "false",
+    "is_user": "true",
     "conditional_activation": {
-      "activated_by_key": "test",
-      "activated_by_value": "test",
+      "activated_by_key": "has eaten",
+      "activated_by_value": "true",
       "activate_key": "",
       "activate_value": ""
     }

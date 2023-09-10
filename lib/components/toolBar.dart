@@ -433,7 +433,7 @@ class _ToolbarState extends State<Toolbar> {
                               ],
                             );
                           }),
-                          const ConditionalActivationComponent(),
+                          ConditionalActivationComponent(addError: addError),
                         ],
                       ),
                       Card(

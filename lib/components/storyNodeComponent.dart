@@ -95,6 +95,33 @@ class StoryNodeComponent extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+              if(item.hasCondition())
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(5),
+                      color: Colors.pink,
+                      child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        alignment: WrapAlignment.center,
+                        spacing: 10,
+                        children: [
+                          const Icon(
+                            Icons.auto_awesome_sharp,
+                            color: Colors.white,
+                          ),
+                          Text(
+                            "${item.conditionalActivation?.activatedByKey} = ${item.conditionalActivation?.activatedByValue}",
+                            style: const TextStyle(color: Colors.white, fontSize: 25),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               )
             ],
           ),

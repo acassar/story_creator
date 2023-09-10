@@ -7,7 +7,8 @@ import 'package:story_creator/services/nodeServiceProvider.dart';
 import 'package:story_creator/services/storyServiceProvider.dart';
 
 class ConditionalActivationComponent extends StatefulWidget {
-  const ConditionalActivationComponent({super.key});
+  final dynamic addError;
+  const ConditionalActivationComponent({super.key, required this.addError});
 
   @override
   State<ConditionalActivationComponent> createState() =>
@@ -27,7 +28,7 @@ class _ConditionalActivationComponentState
     super.initState();
   }
 
-  void clearForm () {
+  void clearForm() {
     activateKeyController.clear();
     activateValueController.clear();
     activatedByKeyController.clear();
@@ -35,15 +36,35 @@ class _ConditionalActivationComponentState
   }
 
   void setConditionalActivation(NodeServiceProvider nodeServiceProvider) {
-    var activation = ConditionalActivation(
-        activatedByKey: activatedByKeyController.text,
-        activatedByValue: activatedByValueController.text,
-        activateKey: activateKeyController.text,
-        activateValue: activateValueController.text);
+    if (!isValid()) {
+      widget.addError("Please provide a key if you provide a value");
+    } else {
+      var activation = ConditionalActivation(
+          activatedByKey: activatedByKeyController.text,
+          activatedByValue: activatedByValueController.text,
+          activateKey: activateKeyController.text,
+          activateValue: activateValueController.text);
 
-    StoryServiceProvider storyServiceProvider =
-        Provider.of<StoryServiceProvider>(context, listen: false);
-        storyServiceProvider.setConditionalActivation(nodeServiceProvider.selectedNode!, activation);
+      StoryServiceProvider storyServiceProvider =
+          Provider.of<StoryServiceProvider>(context, listen: false);
+      storyServiceProvider.setConditionalActivation(
+          nodeServiceProvider.selectedNode!, activation);
+      clearForm();
+      nodeServiceProvider.clear();
+    }
+  }
+
+  //TODO: decide if we can make a character text condition activable, but in this case, it means we should allow multiple charac texts on a same level
+
+  ///make sure that if a value is filled, the key must be too
+  bool isValid() {
+    if (activatedByValueController.text != "" &&
+        activatedByKeyController.text == "") return false;
+    if (activateValueController.text != "" &&
+        activateKeyController.text == "") {
+      return false;
+    }
+    return true;
   }
 
   @override
@@ -113,7 +134,8 @@ class _ConditionalActivationComponentState
                   text: "Clear form",
                   color: Colors.redAccent),
               CustomButton(
-                  disabled: nodeServiceProvider.selectedNode == null,
+                  disabled:
+                      nodeServiceProvider.selectedNode == null,
                   callback: () => setConditionalActivation(nodeServiceProvider),
                   text: "Set",
                   color: Colors.blueAccent)

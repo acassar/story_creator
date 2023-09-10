@@ -76,6 +76,14 @@ class StoryItem {
     }
   }
 
+  bool hasCondition() {
+    return conditionalActivation?.activatedByKey != "";
+  }
+
+  bool hasActivation() {
+    return conditionalActivation?.activateKey != "";
+  }
+
   String toJson() {
     return """
   {
