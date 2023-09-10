@@ -3,6 +3,7 @@ import 'package:story_creator/models/storyEdge.dart';
 import 'package:story_creator/models/storyItem.dart';
 import 'package:story_creator/services/nodeServiceProvider.dart';
 import 'package:story_creator/services/storyServiceProvider.dart';
+import 'package:story_creator/services/validationRules/validationRules.dart';
 
 class ValidationService {
   final StoryServiceProvider storyService;
@@ -15,55 +16,32 @@ class ValidationService {
     List<StoryEdge> to = storyService.getEdgesFromOtherToSource(item);
     List<StoryItem> childrenItems = [];
     List<StoryItem> parentItems = [];
+    List<ValidationRules> rules = [
+      SiblingValidation(storyService, item, parentItems)
+    ];
 
-    fillChildren(childrenItems, from);
+    fillChildren(childrenItems, from, storyService);
 
-    fillParents(parentItems, to);
-    validateNoSiblingForCharacterTextAnd4UserChoiceMax(item, parentItems);
-    //TODO
+    fillParents(parentItems, to, storyService);
+    for (var element in rules) {
+      element.validate();
+    }
     return true;
   }
 
-  fillChildren(List<StoryItem> items, List<StoryEdge> from) {
+  static void fillChildren(List<StoryItem> items, List<StoryEdge> from,
+      StoryServiceProvider storyServiceProvider) {
     for (StoryEdge edge in from) {
-      items.add(storyService.currentStory!.items
+      items.add(storyServiceProvider.currentStory!.items
           .firstWhere((element) => element.id == edge.to));
     }
-    return items;
   }
 
-  fillParents(List<StoryItem> items, List<StoryEdge> to) {
+  static void fillParents(List<StoryItem> items, List<StoryEdge> to,
+      StoryServiceProvider storyServiceProvider) {
     for (StoryEdge edge in to) {
-      items.add(storyService.currentStory!.items
+      items.add(storyServiceProvider.currentStory!.items
           .firstWhere((element) => element.id == edge.from));
     }
-    return items;
-  }
-
-  /// Ensure that two nodes representing a character chat exists at the same level (a node can't have two child of that type)
-  bool validateNoSiblingForCharacterTextAnd4UserChoiceMax(
-      StoryItem item, List<StoryItem> parents) {
-    for (StoryItem parent in parents) {
-      List<StoryItem> siblings = [];
-      List<StoryEdge> from = storyService.getEdgesFromSourceToOther(parent);
-      fillChildren(siblings, from);
-      if (siblings.length > 1) {
-        if (!item.isUser) {
-          throw ErrorDescription(
-              "You can't add a character text when there is other texts at the same level");
-        } else {
-          if (siblings.length > 4) {
-            throw ErrorDescription(
-                "You can't add more than 4 choices to a node");
-          }
-          if(siblings.any((element) => !element.isUser))
-          {
-            throw ErrorDescription(
-                "You can't add a choice when there is already a character text at the same level");
-          }
-        }
-      }
-    }
-    return true;
   }
 }
