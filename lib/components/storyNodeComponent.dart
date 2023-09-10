@@ -113,7 +113,34 @@ class StoryNodeComponent extends StatelessWidget {
                             color: Colors.white,
                           ),
                           Text(
-                            "${item.conditionalActivation?.activatedByKey} = ${item.conditionalActivation?.activatedByValue}",
+                            "Can be chosen if : ${item.conditionalActivation.activatedByKey} = ${item.conditionalActivation.activatedByValue}",
+                            style: const TextStyle(color: Colors.white, fontSize: 25),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              if(item.hasActivation())
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(5),
+                      color: Colors.purple,
+                      child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        alignment: WrapAlignment.center,
+                        spacing: 10,
+                        children: [
+                          const Icon(
+                            Icons.auto_awesome_sharp,
+                            color: Colors.white,
+                          ),
+                          Text(
+                            "${item.conditionalActivation.activateKey} = ${item.conditionalActivation.activateValue}",
                             style: const TextStyle(color: Colors.white, fontSize: 25),
                             textAlign: TextAlign.center,
                           ),

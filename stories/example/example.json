@@ -119,13 +119,104 @@
   }
 ,  {
     "id": "dd46e6a3-2908-4a5b-990c-81b6f89c9152",
-    "text": "Un choix avec une condition d'activation",
+    "text": "On peut continuer",
+    "end": "not",
+    "minutes_to_wait": "0",
+    "is_user": "false",
+    "conditional_activation": {
+      "activated_by_key": "",
+      "activated_by_value": "",
+      "activate_key": "",
+      "activate_value": ""
+    }
+  }
+,  {
+    "id": "4a22a2f8-1766-4d3c-a77c-745a6b6b3e23",
+    "text": "Chemin alternatif",
     "end": "not",
     "minutes_to_wait": "0",
     "is_user": "true",
     "conditional_activation": {
-      "activated_by_key": "has eaten",
-      "activated_by_value": "true",
+      "activated_by_key": "",
+      "activated_by_value": "",
+      "activate_key": "",
+      "activate_value": ""
+    }
+  }
+,  {
+    "id": "b3ae1452-35c3-48cf-b1db-a111ad1465d0",
+    "text": "Je peux manger ?",
+    "end": "not",
+    "minutes_to_wait": "0",
+    "is_user": "false",
+    "conditional_activation": {
+      "activated_by_key": "",
+      "activated_by_value": "",
+      "activate_key": "",
+      "activate_value": ""
+    }
+  }
+,  {
+    "id": "1df9c4d0-d70d-4eac-a810-ddacf5c00483",
+    "text": "Oui",
+    "end": "not",
+    "minutes_to_wait": "0",
+    "is_user": "true",
+    "conditional_activation": {
+      "activated_by_key": "",
+      "activated_by_value": "",
+      "activate_key": "à mangé",
+      "activate_value": "oui"
+    }
+  }
+,  {
+    "id": "167d661f-b91d-4750-afa6-3a83dfab6b0f",
+    "text": "Non",
+    "end": "not",
+    "minutes_to_wait": "0",
+    "is_user": "true",
+    "conditional_activation": {
+      "activated_by_key": "",
+      "activated_by_value": "",
+      "activate_key": "à mangé",
+      "activate_value": "non"
+    }
+  }
+,  {
+    "id": "a0848e19-53e0-433a-83aa-3b94b6305bfa",
+    "text": "Je suis bloqué dans un trou",
+    "end": "not",
+    "minutes_to_wait": "0",
+    "is_user": "false",
+    "conditional_activation": {
+      "activated_by_key": "",
+      "activated_by_value": "",
+      "activate_key": "",
+      "activate_value": ""
+    }
+  }
+,  {
+    "id": "15a99e1d-7849-4e90-b20c-cb9c3b1f3bcc",
+    "text": "Essaye de sortir",
+    "end": "not",
+    "minutes_to_wait": "0",
+    "is_user": "true",
+    "conditional_activation": {
+      "activated_by_key": "à mangé",
+      "activated_by_value": "oui",
+      "activate_key": "",
+      "activate_value": ""
+    }
+  }
+,  {
+    "id": "2231d31f-eb78-445f-90e5-09ddb0d59e04",
+    "text": "il va falloir attendre de l'aide",
+    "end": "not",
+    "minutes_to_wait": "0",
+    "is_user": "true",
+    "conditional_activation": {
+      "activated_by_key": "",
+      "activated_by_value": "",
       "activate_key": "",
       "activate_value": ""
     }
@@ -168,6 +259,42 @@
 ,  {
     "from": "f009a6f9-421b-4fa4-9a4c-781d78463ba5",
     "to": "dd46e6a3-2908-4a5b-990c-81b6f89c9152"
+  }
+,  {
+    "from": "2f1e0b7b-5dda-4b5f-a3ee-a744563eb9af",
+    "to": "4a22a2f8-1766-4d3c-a77c-745a6b6b3e23"
+  }
+,  {
+    "from": "4a22a2f8-1766-4d3c-a77c-745a6b6b3e23",
+    "to": "b3ae1452-35c3-48cf-b1db-a111ad1465d0"
+  }
+,  {
+    "from": "b3ae1452-35c3-48cf-b1db-a111ad1465d0",
+    "to": "1df9c4d0-d70d-4eac-a810-ddacf5c00483"
+  }
+,  {
+    "from": "b3ae1452-35c3-48cf-b1db-a111ad1465d0",
+    "to": "167d661f-b91d-4750-afa6-3a83dfab6b0f"
+  }
+,  {
+    "from": "1df9c4d0-d70d-4eac-a810-ddacf5c00483",
+    "to": "dd46e6a3-2908-4a5b-990c-81b6f89c9152"
+  }
+,  {
+    "from": "167d661f-b91d-4750-afa6-3a83dfab6b0f",
+    "to": "dd46e6a3-2908-4a5b-990c-81b6f89c9152"
+  }
+,  {
+    "from": "dd46e6a3-2908-4a5b-990c-81b6f89c9152",
+    "to": "a0848e19-53e0-433a-83aa-3b94b6305bfa"
+  }
+,  {
+    "from": "a0848e19-53e0-433a-83aa-3b94b6305bfa",
+    "to": "15a99e1d-7849-4e90-b20c-cb9c3b1f3bcc"
+  }
+,  {
+    "from": "a0848e19-53e0-433a-83aa-3b94b6305bfa",
+    "to": "2231d31f-eb78-445f-90e5-09ddb0d59e04"
   }
 
   ]
