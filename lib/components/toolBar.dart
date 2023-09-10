@@ -374,6 +374,12 @@ class _ToolbarState extends State<Toolbar> {
                               runSpacing: 10,
                               children: [
                                 CustomButton(
+                                  callback: () => goToNode(storyService.currentStory!.items[0], storyService),
+                                  color:  Colors.purple,
+                                  text: "Go to first node",
+                                  disabled: false,
+                                ),
+                                CustomButton(
                                   callback: nodeService.selectedNode != null
                                       ? () => switchLinkTo(
                                           storyService, nodeService)
