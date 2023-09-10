@@ -34,7 +34,19 @@ class Story {
   }
 
   StoryItem convertToStoryItem(Map<String, dynamic> data) {
-    StoryItem item = StoryItem(data["id"], data["text"], end: addEnd(data["end"]), isUser: data["is_user"] == "true" ? true : false, minutesToWait: int.parse(data["minutes_to_wait"]));
+    StoryItem item = StoryItem(
+      data["id"],
+      data["text"],
+      end: addEnd(data["end"]),
+      isUser: data["is_user"] == "true" ? true : false,
+      minutesToWait: int.parse(data["minutes_to_wait"]),
+      conditionalActivation: ConditionalActivation(
+          activatedByKey: data["conditional_activation"]["activated_by_key"],
+          activatedByValue: data["conditional_activation"]
+              ["activated_by_value"],
+          activateKey: data["conditional_activation"]["activate_key"],
+          activateValue: data["conditional_activation"]["activate_value"]),
+    );
     return item;
   }
 }

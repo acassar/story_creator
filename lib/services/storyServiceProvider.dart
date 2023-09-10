@@ -127,6 +127,11 @@ class StoryServiceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setConditionalActivation(StoryItem item, ConditionalActivation conditionalActivation) {
+    item.conditionalActivation = conditionalActivation;
+    notifyListeners();
+  }
+
   addLink(StoryItem selectedItem, StoryItem toSelectedItem) {
     currentStory!.edges.add(StoryEdge(selectedItem.id, toSelectedItem.id));
     graph.addEdge(Node.Id(selectedItem.id), Node.Id(toSelectedItem.id));

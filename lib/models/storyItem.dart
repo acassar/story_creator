@@ -4,29 +4,50 @@ import 'package:flutter/material.dart';
 
 enum EndType { bad, good, not }
 
+class ConditionalActivation {
+  final String activatedByKey;
+  final String activatedByValue;
+  final String activateKey;
+  final String activateValue;
+
+  ConditionalActivation(
+      {required this.activatedByKey,
+      required this.activatedByValue,
+      required this.activateKey,
+      required this.activateValue});
+}
+
 class StoryItem {
   String id;
   String text;
   EndType end;
   int minutesToWait;
   bool isUser;
+  ConditionalActivation? conditionalActivation;
 
   StoryItem(
     this.id,
     this.text, {
     required this.end,
     this.isUser = false,
-    this.minutesToWait = 0
+    this.minutesToWait = 0,
+    this.conditionalActivation,
   });
 
-  static createFromForm(
-      {required String id,
-      required String text,
-      required String minutesDelay,
-      required bool isUser,
-      String? end}) {
-    return StoryItem(id, text,
-        isUser: isUser, end: end != null ? stringToEndType(end) : EndType.not, minutesToWait: int.parse(minutesDelay));
+  static createFromForm({
+    required String id,
+    required String text,
+    required String minutesDelay,
+    required bool isUser,
+    String? end,
+  }) {
+    return StoryItem(
+      id,
+      text,
+      isUser: isUser,
+      end: end != null ? stringToEndType(end) : EndType.not,
+      minutesToWait: int.parse(minutesDelay),
+    );
   }
 
   static stringToEndType(String end) {
@@ -62,7 +83,13 @@ class StoryItem {
     "text": "$text",
     "end": "${endTypeToString(end) ?? "not"}",
     "minutes_to_wait": "$minutesToWait",
-    "is_user": "$isUser"
+    "is_user": "$isUser",
+    "conditional_activation": {
+      "activated_by_key": "${conditionalActivation?.activatedByKey ?? ""}",
+      "activated_by_value": "${conditionalActivation?.activatedByValue ?? ""}",
+      "activate_key": "${conditionalActivation?.activateKey ?? ""}",
+      "activate_value": "${conditionalActivation?.activateValue ?? ""}"
+    }
   }
 """;
   }

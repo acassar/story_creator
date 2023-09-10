@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:graphview/GraphView.dart';
 import 'package:provider/provider.dart';
+import 'package:story_creator/components/conditionalActivationComponent.dart';
 import 'package:story_creator/components/storyNode.dart';
 import 'package:story_creator/models/storyEdge.dart';
 import 'package:story_creator/models/storyItem.dart';
@@ -11,7 +12,25 @@ import 'package:story_creator/services/validationService.dart';
 
 class Toolbar extends StatefulWidget {
   final String defaultFileName;
+  static const Color inputColor = Color(0xFF6200EE);
+  static const double secondaryInputWidth = 140;
   const Toolbar({super.key, required this.defaultFileName});
+
+  static getInputDecoration(String label, IconData icon) {
+    return InputDecoration(
+      suffixIcon: Icon(icon),
+      labelText: label,
+      labelStyle: const TextStyle(
+        color: inputColor,
+      ),
+      enabledBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        borderSide: BorderSide(
+          color: inputColor,
+        ),
+      ),
+    );
+  }
 
   @override
   State<Toolbar> createState() => _ToolbarState();
@@ -39,26 +58,8 @@ class _ToolbarState extends State<Toolbar> {
   ];
   String? endTypeSelected;
   bool isUserSpeaking = false;
-  double secondaryInputWidth = 140;
-  Color inputColor = const Color(0xFF6200EE);
   EdgeInsets cardPad = const EdgeInsets.all(10);
   late ValidationService validationService;
-
-  getInputDecoration(String label, IconData icon) {
-    return InputDecoration(
-      suffixIcon: Icon(icon),
-      labelText: label,
-      labelStyle: TextStyle(
-        color: inputColor,
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-        borderSide: BorderSide(
-          color: inputColor,
-        ),
-      ),
-    );
-  }
 
   onEndTypeSelect(dynamic value) {
     setState(() {
@@ -94,11 +95,12 @@ class _ToolbarState extends State<Toolbar> {
   void createNode(
       StoryServiceProvider storyService, NodeServiceProvider nodeService) {
     StoryItem newItem = StoryItem.createFromForm(
-        id: storyService.getNewId(),
-        text: textController.text,
-        isUser: isUserSpeaking,
-        end: endTypeSelected,
-        minutesDelay: minutesDelayController.text);
+      id: storyService.getNewId(),
+      text: textController.text,
+      isUser: isUserSpeaking,
+      end: endTypeSelected,
+      minutesDelay: minutesDelayController.text,
+    );
     storyService.createNode(newItem, nodeService.selectedNode!);
     nodeService.selectNode(null);
     try {
@@ -117,8 +119,13 @@ class _ToolbarState extends State<Toolbar> {
         saveDelay = itemToUpdate.minutesToWait,
         saveIsUser = itemToUpdate.isUser;
 
-    storyService.updateNode(textController.text, endTypeSelected!,
-        minutesDelayController.text, isUserSpeaking, nodeService.selectedNode!);
+    storyService.updateNode(
+      textController.text,
+      endTypeSelected!,
+      minutesDelayController.text,
+      isUserSpeaking,
+      nodeService.selectedNode!
+    );
 
     try {
       validationService.validate(nodeService.selectedNode!);
@@ -216,8 +223,8 @@ class _ToolbarState extends State<Toolbar> {
                     const Text("node selected: "),
                     Text(
                       nodeService.selectedNode?.text ?? "nothing",
-                      style: TextStyle(
-                          color: inputColor,
+                      style: const TextStyle(
+                          color: Toolbar.inputColor,
                           fontWeight: FontWeight.bold,
                           fontSize: 20),
                     ),
@@ -253,9 +260,10 @@ class _ToolbarState extends State<Toolbar> {
                                             width: 400,
                                             margin: const EdgeInsets.all(5),
                                             child: TextField(
-                                              decoration: getInputDecoration(
-                                                  "content",
-                                                  Icons.textsms_rounded),
+                                              decoration:
+                                                  Toolbar.getInputDecoration(
+                                                      "content",
+                                                      Icons.textsms_rounded),
                                               controller: textController,
                                               maxLines: 5,
                                             ),
@@ -267,12 +275,14 @@ class _ToolbarState extends State<Toolbar> {
                                           Column(
                                             children: [
                                               SizedBox(
-                                                width: secondaryInputWidth,
+                                                width:
+                                                    Toolbar.secondaryInputWidth,
                                                 child: DropdownButtonFormField(
-                                                    decoration: getInputDecoration(
-                                                        "End type",
-                                                        Icons
-                                                            .account_tree_sharp),
+                                                    decoration: Toolbar
+                                                        .getInputDecoration(
+                                                            "End type",
+                                                            Icons
+                                                                .account_tree_sharp),
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             10),
@@ -287,11 +297,13 @@ class _ToolbarState extends State<Toolbar> {
                                             ],
                                           ),
                                           Container(
-                                            width: secondaryInputWidth,
+                                            width: Toolbar.secondaryInputWidth,
                                             margin: const EdgeInsets.all(5),
                                             child: TextField(
-                                              decoration: getInputDecoration(
-                                                  "Minutes delay", Icons.timer),
+                                              decoration:
+                                                  Toolbar.getInputDecoration(
+                                                      "Minutes delay",
+                                                      Icons.timer),
                                               inputFormatters: <TextInputFormatter>[
                                                 FilteringTextInputFormatter
                                                     .digitsOnly
@@ -306,14 +318,16 @@ class _ToolbarState extends State<Toolbar> {
                                           Column(
                                             children: [
                                               Container(
-                                                  width: secondaryInputWidth,
+                                                  width: Toolbar
+                                                      .secondaryInputWidth,
                                                   margin:
                                                       const EdgeInsets.all(5),
                                                   child: CheckboxListTile(
-                                                    title: Text(
+                                                    title: const Text(
                                                       "Choice",
                                                       style: TextStyle(
-                                                        color: inputColor,
+                                                        color:
+                                                            Toolbar.inputColor,
                                                       ),
                                                     ),
                                                     value: isUserSpeaking,
@@ -332,7 +346,7 @@ class _ToolbarState extends State<Toolbar> {
                                                 builder: (context, storyService,
                                                     child) {
                                               return CustomButton(
-                                                color: inputColor,
+                                                color: Toolbar.inputColor,
                                                 text: "Create node",
                                                 disabled:
                                                     nodeService.selectedNode ==
@@ -365,13 +379,14 @@ class _ToolbarState extends State<Toolbar> {
                           ),
                         ],
                       ),
-                      Row(
+                      Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Consumer<StoryServiceProvider>(
                               builder: (context, storyService, child) {
                             return Wrap(
                               runSpacing: 10,
+                              // direction: Axis.vertical,
                               children: [
                                 CustomButton(
                                   callback: () => goToNode(
@@ -421,6 +436,7 @@ class _ToolbarState extends State<Toolbar> {
                               ],
                             );
                           }),
+                          const ConditionalActivationComponent(),
                         ],
                       ),
                       Card(
@@ -441,8 +457,9 @@ class _ToolbarState extends State<Toolbar> {
                                         SizedBox(
                                           width: 200,
                                           child: TextField(
-                                            decoration: getInputDecoration(
-                                                "File", Icons.file_copy),
+                                            decoration:
+                                                Toolbar.getInputDecoration(
+                                                    "File", Icons.file_copy),
                                             controller: fileNameController,
                                           ),
                                         ),
@@ -451,7 +468,7 @@ class _ToolbarState extends State<Toolbar> {
                                               storyService.loadStory(
                                                   fileNameController.text),
                                           text: "Load",
-                                          color: inputColor,
+                                          color: Toolbar.inputColor,
                                           disabled: false,
                                         )
                                       ],
@@ -536,6 +553,5 @@ class CustomButton extends StatelessWidget {
         ),
       ),
     );
-    ;
   }
 }
