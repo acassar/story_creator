@@ -136,6 +136,13 @@ class _ToolbarState extends State<Toolbar> {
         nodeServiceProvider.linkToSelection != null) {
       storyServiceProvider.addLink(nodeServiceProvider.selectedNode!,
           nodeServiceProvider.linkToSelection!);
+      try {
+        validationService.validate(nodeServiceProvider.selectedNode!);
+      } catch (error) {
+        addError(error.toString());
+        storyServiceProvider.removeLink(nodeServiceProvider.selectedNode!,
+            nodeServiceProvider.linkToSelection!);
+      }
       nodeServiceProvider.clear();
     } else {
       nodeServiceProvider.activateLinkTo();
