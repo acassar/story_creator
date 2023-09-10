@@ -12,7 +12,7 @@ import 'package:uuid/uuid.dart';
 class StoryServiceProvider extends ChangeNotifier {
   String folderName = "example";
   StoryItem defaultFileContent = StoryItem("start", "Story start",
-      end: EndType.not, isUser: false, minutesToWait: 0);
+      end: EndType.not, isUser: false, minutesToWait: 0, conditionalActivation: ConditionalActivation(activateKey: "", activateValue: "", activatedByKey: "", activatedByValue: ""));
   Graph graph = Graph()..isTree = true;
   TransformationController? _transformationController;
   late Matrix4 transformationControllerDefaultValue;

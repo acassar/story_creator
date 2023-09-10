@@ -23,7 +23,7 @@ class StoryItem {
   EndType end;
   int minutesToWait;
   bool isUser;
-  ConditionalActivation? conditionalActivation;
+  ConditionalActivation conditionalActivation;
 
   StoryItem(
     this.id,
@@ -31,7 +31,7 @@ class StoryItem {
     required this.end,
     this.isUser = false,
     this.minutesToWait = 0,
-    this.conditionalActivation,
+    required this.conditionalActivation,
   });
 
   static createFromForm({
@@ -47,6 +47,7 @@ class StoryItem {
       isUser: isUser,
       end: end != null ? stringToEndType(end) : EndType.not,
       minutesToWait: int.parse(minutesDelay),
+      conditionalActivation: ConditionalActivation(activateKey: "", activateValue: "", activatedByKey: "", activatedByValue: "")
     );
   }
 
