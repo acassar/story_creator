@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:story_creator/components/storyNode.dart';
+import 'package:story_creator/components/storyNodeComponent.dart';
 import 'package:story_creator/components/toolBar.dart';
 import 'package:story_creator/models/storyEdge.dart';
 import 'package:story_creator/models/story.dart';
@@ -82,7 +82,7 @@ class _StoryCreatorState extends State<StoryCreator> {
                         builder: (Node node) {
                           // I can decide what widget should be shown here based on the id
                           var id = node.key!.value;
-                          return StoryNode(
+                          return StoryNodeComponent(
                             item: findNode(id, storyService),
                             callack: nodeClickCallback,
                             key: Key(id),

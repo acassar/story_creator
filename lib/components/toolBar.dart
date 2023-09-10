@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:graphview/GraphView.dart';
 import 'package:provider/provider.dart';
 import 'package:story_creator/components/conditionalActivationComponent.dart';
-import 'package:story_creator/components/storyNode.dart';
-import 'package:story_creator/models/storyEdge.dart';
 import 'package:story_creator/models/storyItem.dart';
 import 'package:story_creator/services/nodeServiceProvider.dart';
 import 'package:story_creator/services/storyServiceProvider.dart';

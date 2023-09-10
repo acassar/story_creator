@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:graphview/GraphView.dart';
-import 'package:story_creator/components/storyNode.dart';
+import 'package:story_creator/components/storyNodeComponent.dart';
 import 'package:story_creator/models/story.dart';
 import 'package:story_creator/models/storyEdge.dart';
 import 'package:story_creator/models/storyItem.dart';
