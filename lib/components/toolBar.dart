@@ -7,6 +7,7 @@ import 'package:story_creator/models/storyEdge.dart';
 import 'package:story_creator/models/storyItem.dart';
 import 'package:story_creator/services/nodeServiceProvider.dart';
 import 'package:story_creator/services/storyServiceProvider.dart';
+import 'package:story_creator/services/validationService.dart';
 
 class Toolbar extends StatefulWidget {
   final String defaultFileName;
@@ -41,6 +42,7 @@ class _ToolbarState extends State<Toolbar> {
   double secondaryInputWidth = 140;
   Color inputColor = const Color(0xFF6200EE);
   EdgeInsets cardPad = const EdgeInsets.all(10);
+  late ValidationService validationService;
 
   getInputDecoration(String label, IconData icon) {
     return InputDecoration(
@@ -69,6 +71,10 @@ class _ToolbarState extends State<Toolbar> {
     super.initState();
     fileNameController.text = widget.defaultFileName;
     onEndTypeSelect("not");
+    WidgetsBinding.instance.addPostFrameCallback((_) => validationService =
+        ValidationService(
+            Provider.of<StoryServiceProvider>(context, listen: false),
+            Provider.of<NodeServiceProvider>(context, listen: false)));
   }
 
   addError(String error) async {
@@ -85,25 +91,6 @@ class _ToolbarState extends State<Toolbar> {
     });
   }
 
-  bool validate(StoryServiceProvider storyService,
-      NodeServiceProvider nodeService, StoryItem item) {
-    List<StoryEdge> from = storyService.getEdgesFromSourceToOther(item);
-    List<StoryEdge> to = storyService.getEdgesFromOtherToSource(item);
-    List<StoryItem> childrenItems = [];
-    List<StoryItem> parentItems = [];
-
-    for (StoryEdge edge in from) {
-      childrenItems.add(storyService.currentStory!.items
-          .firstWhere((element) => element.id == edge.to));
-    }
-    for (StoryEdge edge in to) {
-      parentItems.add(storyService.currentStory!.items
-          .firstWhere((element) => element.id == edge.from));
-    }
-    //TODO
-    return true;
-  }
-
   void createNode(
       StoryServiceProvider storyService, NodeServiceProvider nodeService) {
     StoryItem newItem = StoryItem.createFromForm(
@@ -114,9 +101,14 @@ class _ToolbarState extends State<Toolbar> {
         minutesDelay: minutesDelayController.text);
     storyService.createNode(newItem, nodeService.selectedNode!);
     nodeService.selectNode(null);
-    if (!validate(storyService, nodeService, newItem)) {
+    try {
+      if (!validationService.validate(newItem)) {
+        storyService.removeNode(newItem);
+        addError("Please provide a valid item");
+      }
+    } catch (error) {
+      addError(error.toString());
       storyService.removeNode(newItem);
-      addError("Please provide a valid item");
     }
   }
 
@@ -131,10 +123,16 @@ class _ToolbarState extends State<Toolbar> {
     storyService.updateNode(textController.text, endTypeSelected!,
         minutesDelayController.text, isUserSpeaking, nodeService.selectedNode!);
 
-    if (!validate(storyService, nodeService, nodeService.selectedNode!)) {
+    try {
+      if (!validationService.validate(nodeService.selectedNode!)) {
+        storyService.updateNode(saveText, saveEnd.name, saveDelay.toString(),
+            saveIsUser, nodeService.selectedNode!);
+        addError("Please provide a valid item");
+      }
+    } catch (error) {
+      addError(error.toString());
       storyService.updateNode(saveText, saveEnd.name, saveDelay.toString(),
           saveIsUser, nodeService.selectedNode!);
-      addError("Please provide a valid item");
     }
     nodeService.clear();
   }
@@ -380,25 +378,25 @@ class _ToolbarState extends State<Toolbar> {
                                       ? () => switchLinkTo(
                                           storyService, nodeService)
                                       : null,
-                                      color: nodeService.isLinkingTo
-                                              ? Colors.amber
-                                              : Colors.blue,
+                                  color: nodeService.isLinkingTo
+                                      ? Colors.amber
+                                      : Colors.blue,
                                   text: nodeService.isLinkingTo
-                                          ? "submit link"
-                                          : "link to",
-                                          disabled: false,
+                                      ? "submit link"
+                                      : "link to",
+                                  disabled: false,
                                 ),
                                 CustomButton(
                                   callback: nodeService.selectedNode != null
                                       ? () => switchRemovingEdge(
                                           storyService, nodeService)
                                       : null,
-                                      text: nodeService.isRemovingEdge
-                                          ? "submit remove edge"
-                                          : "Remove edge",
-                                          color: nodeService.isRemovingEdge
-                                              ? Colors.amber
-                                              : Colors.blue,
+                                  text: nodeService.isRemovingEdge
+                                      ? "submit remove edge"
+                                      : "Remove edge",
+                                  color: nodeService.isRemovingEdge
+                                      ? Colors.amber
+                                      : Colors.blue,
                                   disabled: false,
                                 ),
                                 CustomButton(
@@ -406,10 +404,10 @@ class _ToolbarState extends State<Toolbar> {
                                       ? () =>
                                           removeNode(storyService, nodeService)
                                       : null,
-                                      text: nodeService.isRemovingEdge
-                                          ? "submit remove"
-                                          : "Remove (warning: no confirmation)",
-                                          color: Colors.red,
+                                  text: nodeService.isRemovingEdge
+                                      ? "submit remove"
+                                      : "Remove (warning: no confirmation)",
+                                  color: Colors.red,
                                   disabled: false,
                                 ),
                               ],
@@ -441,8 +439,9 @@ class _ToolbarState extends State<Toolbar> {
                                           ),
                                         ),
                                         CustomButton(
-                                          callback: () => storyService
-                                              .loadStory(fileNameController.text),
+                                          callback: () =>
+                                              storyService.loadStory(
+                                                  fileNameController.text),
                                           text: "Load",
                                           color: inputColor,
                                           disabled: false,
@@ -462,8 +461,9 @@ class _ToolbarState extends State<Toolbar> {
                                             disabled: false,
                                           ),
                                           CustomButton(
-                                            callback: () => storyService
-                                                .saveStory(fileNameController.text),
+                                            callback: () =>
+                                                storyService.saveStory(
+                                                    fileNameController.text),
                                             color: Colors.green,
                                             text: "Save",
                                             disabled: false,
