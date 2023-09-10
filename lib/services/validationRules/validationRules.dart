@@ -6,21 +6,24 @@ import 'package:story_creator/services/validationService.dart';
 
 abstract class ValidationRules {
   final StoryServiceProvider storyService;
+  final StoryItem item;
   String title;
   String description;
 
-  ValidationRules(
-      {required this.title,
-      required this.description,
-      required this.storyService});
+  ValidationRules({
+    required this.title,
+    required this.description,
+    required this.storyService,
+    required this.item,
+  });
 
   void validate();
 }
 
 class SiblingValidation extends ValidationRules {
-  final StoryItem item;
   final List<StoryItem> parents;
-  SiblingValidation(StoryServiceProvider storyService, this.item, this.parents)
+  SiblingValidation(StoryServiceProvider storyService, this.parents,
+      {required super.item})
       : super(
             title: "Sibling validation",
             description:
@@ -48,6 +51,27 @@ class SiblingValidation extends ValidationRules {
           }
         }
       }
+    }
+  }
+}
+
+class NoNodeAfterEnd extends ValidationRules {
+  final List<StoryItem> parents;
+  final List<StoryItem> children;
+  NoNodeAfterEnd(
+      {required super.storyService,
+      required super.item,
+      required this.parents,
+      required this.children})
+      : super(
+            title: "No node after end",
+            description: "Make sure that no node exists after an end");
+
+  @override
+  void validate() {
+    if (parents.any((element) => element.end != EndType.not) ||
+        children.isNotEmpty) {
+      throw ErrorDescription("An end can't have children");
     }
   }
 }
