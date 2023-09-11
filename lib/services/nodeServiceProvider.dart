@@ -15,7 +15,7 @@ class NodeServiceProvider extends ChangeNotifier {
     longClickedNode = item;
     notifyListeners();
   }
-  
+
   selectNode(StoryItem? item) {
     if (item == selectedNode) {
       item = null;

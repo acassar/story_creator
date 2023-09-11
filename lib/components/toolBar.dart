@@ -194,6 +194,7 @@ class _ToolbarState extends State<Toolbar> {
       nodeTypeSelected = nodeService.longClickedNode!.nodeTypeToString();
       minutesDelayController.text =
           nodeService.longClickedNode!.minutesToWait.toString();
+      nodeService.longClickedNode = null;
     } else {
       //we check if the node has changed, in order to not clear the form if the widget rebuild itself for another reason
       if (nodeService.selectedNode != selectedNode) {
