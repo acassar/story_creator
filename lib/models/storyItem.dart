@@ -63,8 +63,8 @@ class StoryItem {
     }
   }
 
-  nodeTypeToString(NodeType type) {
-    switch (type) {
+  nodeTypeToString() {
+    switch (nodeType) {
       case NodeType.bad:
         return "bad";
       case NodeType.good:
@@ -91,7 +91,7 @@ class StoryItem {
   {
     "id": "$id",
     "text": "$text",
-    "node_type": "${nodeTypeToString(nodeType)}",
+    "node_type": "${nodeTypeToString()}",
     "minutes_to_wait": "$minutesToWait",
     "conditional_activation": {
       "activated_by_key": "${conditionalActivation?.activatedByKey ?? ""}",

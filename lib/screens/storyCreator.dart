@@ -39,7 +39,6 @@ class _StoryCreatorState extends State<StoryCreator> {
   }
 
   nodeClickCallback(StoryItem item) {
-    // setState(() {});
     Provider.of<NodeServiceProvider>(context, listen: false).selectNode(item);
   }
 

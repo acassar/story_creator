@@ -76,6 +76,7 @@ class _ToolbarState extends State<Toolbar> {
         ValidationService(
             Provider.of<StoryServiceProvider>(context, listen: false),
             Provider.of<NodeServiceProvider>(context, listen: false)));
+    Provider.of<StoryServiceProvider>(context, listen: false);
   }
 
   addError(String error) async {
@@ -117,12 +118,8 @@ class _ToolbarState extends State<Toolbar> {
         saveEnd = itemToUpdate.nodeType,
         saveDelay = itemToUpdate.minutesToWait;
 
-    storyService.updateNode(
-      textController.text,
-      endTypeSelected,
-      minutesDelayController.text,
-      nodeService.selectedNode!
-    );
+    storyService.updateNode(textController.text, endTypeSelected,
+        minutesDelayController.text, nodeService.selectedNode!);
 
     try {
       validationService.validate(nodeService.selectedNode!);
@@ -188,6 +185,15 @@ class _ToolbarState extends State<Toolbar> {
         MediaQuery.of(context).size.height);
   }
 
+  void updateForm() {
+    NodeServiceProvider nodeService = Provider.of<NodeServiceProvider>(context);
+    if (nodeService.selectedNode != null) {
+      textController.text = nodeService.selectedNode!.text;
+      endTypeSelected = nodeService.selectedNode!.nodeTypeToString();
+      minutesDelayController.text = nodeService.selectedNode!.minutesToWait.toString();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -225,6 +231,7 @@ class _ToolbarState extends State<Toolbar> {
             );
           }),
           Consumer<NodeServiceProvider>(builder: (context, nodeService, child) {
+            updateForm();
             return Row(
               children: [
                 Expanded(
