@@ -60,6 +60,7 @@ class _ToolbarState extends State<Toolbar> {
   String nodeTypeSelected = "text";
   EdgeInsets cardPad = const EdgeInsets.all(10);
   late ValidationService validationService;
+  StoryItem? selectedNode;
 
   onNodeTypeSelect(dynamic value) {
     setState(() {
@@ -187,21 +188,26 @@ class _ToolbarState extends State<Toolbar> {
 
   void updateForm() {
     NodeServiceProvider nodeService = Provider.of<NodeServiceProvider>(context);
+    //we check if a node has been long clicked to copy it's data to a node
     if (nodeService.longClickedNode != null) {
       textController.text = nodeService.longClickedNode!.text;
       nodeTypeSelected = nodeService.longClickedNode!.nodeTypeToString();
       minutesDelayController.text =
           nodeService.longClickedNode!.minutesToWait.toString();
     } else {
-      //might be a node selection
-      if (nodeService.selectedNode != null) {
-        if (nodeService.selectedNode!.nodeType == NodeType.choice) {
-          nodeTypeSelected = "text";
-        } else if (nodeService.selectedNode!.nodeType == NodeType.text) {
-          nodeTypeSelected = "choice";
+      //we check if the node has changed, in order to not clear the form if the widget rebuild itself for another reason
+      if (nodeService.selectedNode != selectedNode) {
+        selectedNode = nodeService.selectedNode;
+        //might be a node selection
+        if (selectedNode != null) {
+          if (selectedNode!.nodeType == NodeType.choice) {
+            nodeTypeSelected = "text";
+          } else if (selectedNode!.nodeType == NodeType.text) {
+            nodeTypeSelected = "choice";
+          }
+          textController.text = "";
+          minutesDelayController.text = "0";
         }
-        textController.text = "";
-        minutesDelayController.text = "0";
       }
     }
   }

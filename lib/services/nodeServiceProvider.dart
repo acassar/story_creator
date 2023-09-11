@@ -9,7 +9,7 @@ class NodeServiceProvider extends ChangeNotifier {
   StoryItem? linkToSelection;
   bool isLinkingTo = false;
   bool isRemovingEdge = false;
-  StoryItem? longClickedNode;
+  StoryItem? longClickedNode; //used to copy node data to form
 
   void setLongClickedNode(StoryItem item) {
     longClickedNode = item;
