@@ -190,7 +190,19 @@ class _ToolbarState extends State<Toolbar> {
     if (nodeService.longClickedNode != null) {
       textController.text = nodeService.longClickedNode!.text;
       nodeTypeSelected = nodeService.longClickedNode!.nodeTypeToString();
-      minutesDelayController.text = nodeService.longClickedNode!.minutesToWait.toString();
+      minutesDelayController.text =
+          nodeService.longClickedNode!.minutesToWait.toString();
+    } else {
+      //might be a node selection
+      if (nodeService.selectedNode != null) {
+        if (nodeService.selectedNode!.nodeType == NodeType.choice) {
+          nodeTypeSelected = "text";
+        } else if (nodeService.selectedNode!.nodeType == NodeType.text) {
+          nodeTypeSelected = "choice";
+        }
+        textController.text = "";
+        minutesDelayController.text = "0";
+      }
     }
   }
 
