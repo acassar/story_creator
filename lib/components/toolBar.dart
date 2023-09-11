@@ -187,10 +187,10 @@ class _ToolbarState extends State<Toolbar> {
 
   void updateForm() {
     NodeServiceProvider nodeService = Provider.of<NodeServiceProvider>(context);
-    if (nodeService.selectedNode != null) {
-      textController.text = nodeService.selectedNode!.text;
-      nodeTypeSelected = nodeService.selectedNode!.nodeTypeToString();
-      minutesDelayController.text = nodeService.selectedNode!.minutesToWait.toString();
+    if (nodeService.longClickedNode != null) {
+      textController.text = nodeService.longClickedNode!.text;
+      nodeTypeSelected = nodeService.longClickedNode!.nodeTypeToString();
+      minutesDelayController.text = nodeService.longClickedNode!.minutesToWait.toString();
     }
   }
 

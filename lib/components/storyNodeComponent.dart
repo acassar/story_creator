@@ -8,13 +8,16 @@ class StoryNodeComponent extends StatelessWidget {
   final dynamic singleClick;
   final bool selected;
   final bool linkToSelected;
-  const StoryNodeComponent(
-      {super.key,
-      required this.item,
-      required this.callack,
-      required this.selected,
-      required this.singleClick,
-      required this.linkToSelected});
+  final dynamic longClickedNodeCallback;
+  const StoryNodeComponent({
+    super.key,
+    required this.item,
+    required this.callack,
+    required this.selected,
+    required this.singleClick,
+    required this.linkToSelected,
+    required this.longClickedNodeCallback,
+  });
 
   getColor() {
     switch (item.nodeType) {
@@ -41,6 +44,7 @@ class StoryNodeComponent extends StatelessWidget {
     return GestureDetector(
       onDoubleTap: () => callack(item),
       onTap: () => singleClick(item),
+      onLongPress: () => longClickedNodeCallback(item),
       child: Container(
         constraints: const BoxConstraints(
           minWidth: 300,

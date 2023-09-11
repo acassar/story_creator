@@ -46,6 +46,10 @@ class _StoryCreatorState extends State<StoryCreator> {
     Provider.of<NodeServiceProvider>(context, listen: false).selectLinkTo(item);
   }
 
+  longClickedNode(StoryItem item) {
+    Provider.of<NodeServiceProvider>(context, listen: false).setLongClickedNode(item);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<StoryServiceProvider>(
@@ -84,6 +88,7 @@ class _StoryCreatorState extends State<StoryCreator> {
                           return StoryNodeComponent(
                             item: findNode(id, storyService),
                             callack: nodeClickCallback,
+                            longClickedNodeCallback: longClickedNode,
                             key: Key(id),
                             selected: nodeService.selectedNode?.id == id,
                             linkToSelected:

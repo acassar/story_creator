@@ -9,6 +9,12 @@ class NodeServiceProvider extends ChangeNotifier {
   StoryItem? linkToSelection;
   bool isLinkingTo = false;
   bool isRemovingEdge = false;
+  StoryItem? longClickedNode;
+
+  void setLongClickedNode(StoryItem item) {
+    longClickedNode = item;
+    notifyListeners();
+  }
   
   selectNode(StoryItem? item) {
     if (item == selectedNode) {
@@ -51,9 +57,10 @@ class NodeServiceProvider extends ChangeNotifier {
     }
   }
 
-  clear() {
+  void clear() {
     linkToSelection = null;
     selectedNode = null;
+    longClickedNode = null;
     deactivateLinkTo();
     deactivateRemoveEdge();
   }
