@@ -57,13 +57,13 @@ class _ToolbarState extends State<Toolbar> {
       child: Text("bad"),
     ),
   ];
-  String endTypeSelected = "text";
+  String nodeTypeSelected = "text";
   EdgeInsets cardPad = const EdgeInsets.all(10);
   late ValidationService validationService;
 
   onNodeTypeSelect(dynamic value) {
     setState(() {
-      endTypeSelected = value;
+      nodeTypeSelected = value;
     });
   }
 
@@ -98,7 +98,7 @@ class _ToolbarState extends State<Toolbar> {
     StoryItem newItem = StoryItem.createFromForm(
       id: storyService.getNewId(),
       text: textController.text,
-      nodeType: endTypeSelected,
+      nodeType: nodeTypeSelected,
       minutesDelay: minutesDelayController.text,
     );
     storyService.createNode(newItem, nodeService.selectedNode!);
@@ -115,17 +115,17 @@ class _ToolbarState extends State<Toolbar> {
       StoryServiceProvider storyService, NodeServiceProvider nodeService) {
     StoryItem itemToUpdate = storyService.getItem(nodeService.selectedNode!.id);
     var saveText = itemToUpdate.text,
-        saveEnd = itemToUpdate.nodeType,
+        saveNodeType = itemToUpdate.nodeType,
         saveDelay = itemToUpdate.minutesToWait;
 
-    storyService.updateNode(textController.text, endTypeSelected,
+    storyService.updateNode(textController.text, nodeTypeSelected,
         minutesDelayController.text, nodeService.selectedNode!);
 
     try {
       validationService.validate(nodeService.selectedNode!);
     } catch (error) {
       addError(error.toString());
-      storyService.updateNode(saveText, saveEnd.name, saveDelay.toString(),
+      storyService.updateNode(saveText, saveNodeType.name, saveDelay.toString(),
           nodeService.selectedNode!);
     }
     nodeService.clear();
@@ -189,7 +189,7 @@ class _ToolbarState extends State<Toolbar> {
     NodeServiceProvider nodeService = Provider.of<NodeServiceProvider>(context);
     if (nodeService.selectedNode != null) {
       textController.text = nodeService.selectedNode!.text;
-      endTypeSelected = nodeService.selectedNode!.nodeTypeToString();
+      nodeTypeSelected = nodeService.selectedNode!.nodeTypeToString();
       minutesDelayController.text = nodeService.selectedNode!.minutesToWait.toString();
     }
   }
@@ -278,7 +278,7 @@ class _ToolbarState extends State<Toolbar> {
                                                 child: DropdownButtonFormField(
                                                     decoration: Toolbar
                                                         .getInputDecoration(
-                                                            "End type",
+                                                            "Node type",
                                                             Icons
                                                                 .account_tree_sharp),
                                                     borderRadius:
@@ -290,7 +290,7 @@ class _ToolbarState extends State<Toolbar> {
                                                     focusColor:
                                                         Colors.transparent,
                                                     onChanged: onNodeTypeSelect,
-                                                    value: endTypeSelected),
+                                                    value: nodeTypeSelected),
                                               ),
                                             ],
                                           ),
