@@ -37,7 +37,7 @@ class SiblingValidation extends ValidationRules {
       List<StoryEdge> from = storyService.getEdgesFromSourceToOther(parent);
       ValidationService.fillChildren(siblings, from, storyService);
       if (siblings.length > 1) {
-        if (!item.isUser) {
+        if (item.nodeType != NodeType.choice ) {
           throw ErrorDescription(
               "You can't add a character text when there is other texts at the same level");
         } else {
@@ -45,7 +45,7 @@ class SiblingValidation extends ValidationRules {
             throw ErrorDescription(
                 "You can't add more than 4 choices to a node");
           }
-          if (siblings.any((element) => !element.isUser)) {
+          if (siblings.any((element) => element.nodeType != NodeType.choice)) {
             throw ErrorDescription(
                 "You can't add a choice when there is already a character text at the same level");
           }
@@ -69,8 +69,8 @@ class NoNodeAfterEnd extends ValidationRules {
 
   @override
   void validate() {
-    if (parents.any((element) => element.end != EndType.not) ||
-        (children.isNotEmpty && item.end != EndType.not)) {
+    if (parents.any((element) => element.nodeType == NodeType.good || element.nodeType == NodeType.bad) ||
+        (children.isNotEmpty && item.nodeType == NodeType.good || item.nodeType == NodeType.bad)) {
       throw ErrorDescription("An end can't have children");
     }
   }

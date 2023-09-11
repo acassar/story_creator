@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
-enum EndType { bad, good, not }
+enum NodeType { bad, good, text, choice }
 
 class ConditionalActivation {
   final String activatedByKey;
@@ -20,16 +20,14 @@ class ConditionalActivation {
 class StoryItem {
   String id;
   String text;
-  EndType end;
+  NodeType nodeType;
   int minutesToWait;
-  bool isUser;
   ConditionalActivation conditionalActivation;
 
   StoryItem(
     this.id,
     this.text, {
-    required this.end,
-    this.isUser = false,
+    required this.nodeType,
     this.minutesToWait = 0,
     required this.conditionalActivation,
   });
@@ -38,42 +36,45 @@ class StoryItem {
     required String id,
     required String text,
     required String minutesDelay,
-    required bool isUser,
-    String? end,
+    required String nodeType,
   }) {
-    return StoryItem(
-      id,
-      text,
-      isUser: isUser,
-      end: end != null ? stringToEndType(end) : EndType.not,
-      minutesToWait: int.parse(minutesDelay),
-      conditionalActivation: ConditionalActivation(activateKey: "", activateValue: "", activatedByKey: "", activatedByValue: "")
-    );
+    return StoryItem(id, text,
+        nodeType: stringToNodeType(nodeType),
+        minutesToWait: int.parse(minutesDelay),
+        conditionalActivation: ConditionalActivation(
+            activateKey: "",
+            activateValue: "",
+            activatedByKey: "",
+            activatedByValue: ""));
   }
 
-  static stringToEndType(String end) {
-    switch (end) {
+  static stringToNodeType(String type) {
+    switch (type) {
       case "bad":
-        return EndType.bad;
+        return NodeType.bad;
       case "good":
-        return EndType.good;
-      case "not":
-        return EndType.not;
+        return NodeType.good;
+      case "text":
+        return NodeType.text;
+      case "choice":
+        return NodeType.choice;
       default:
-        throw ErrorDescription("End type not recognised");
+        throw ErrorDescription("Node type not recognised");
     }
   }
 
-  endTypeToString(EndType type) {
+  nodeTypeToString(NodeType type) {
     switch (type) {
-      case EndType.bad:
+      case NodeType.bad:
         return "bad";
-      case EndType.good:
+      case NodeType.good:
         return "good";
-      case EndType.not:
-        return "not";
+      case NodeType.text:
+        return "text";
+      case NodeType.choice:
+        return "choice";
       default:
-        return "not";
+        return "unknown";
     }
   }
 
@@ -90,9 +91,8 @@ class StoryItem {
   {
     "id": "$id",
     "text": "$text",
-    "end": "${endTypeToString(end) ?? "not"}",
+    "node_type": "${nodeTypeToString(nodeType)}",
     "minutes_to_wait": "$minutesToWait",
-    "is_user": "$isUser",
     "conditional_activation": {
       "activated_by_key": "${conditionalActivation?.activatedByKey ?? ""}",
       "activated_by_value": "${conditionalActivation?.activatedByValue ?? ""}",

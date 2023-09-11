@@ -41,8 +41,12 @@ class _ToolbarState extends State<Toolbar> {
   List<String> error = [];
   List<DropdownMenuItem> dropdownItems = [
     const DropdownMenuItem(
-      value: "not",
-      child: Text("not"),
+      value: "text",
+      child: Text("text"),
+    ),
+    const DropdownMenuItem(
+      value: "choice",
+      child: Text("choice"),
     ),
     const DropdownMenuItem(
       value: "good",
@@ -53,12 +57,11 @@ class _ToolbarState extends State<Toolbar> {
       child: Text("bad"),
     ),
   ];
-  String? endTypeSelected;
-  bool isUserSpeaking = false;
+  String endTypeSelected = "text";
   EdgeInsets cardPad = const EdgeInsets.all(10);
   late ValidationService validationService;
 
-  onEndTypeSelect(dynamic value) {
+  onNodeTypeSelect(dynamic value) {
     setState(() {
       endTypeSelected = value;
     });
@@ -68,7 +71,7 @@ class _ToolbarState extends State<Toolbar> {
   void initState() {
     super.initState();
     fileNameController.text = widget.defaultFileName;
-    onEndTypeSelect("not");
+    onNodeTypeSelect("text");
     WidgetsBinding.instance.addPostFrameCallback((_) => validationService =
         ValidationService(
             Provider.of<StoryServiceProvider>(context, listen: false),
@@ -94,8 +97,7 @@ class _ToolbarState extends State<Toolbar> {
     StoryItem newItem = StoryItem.createFromForm(
       id: storyService.getNewId(),
       text: textController.text,
-      isUser: isUserSpeaking,
-      end: endTypeSelected,
+      nodeType: endTypeSelected,
       minutesDelay: minutesDelayController.text,
     );
     storyService.createNode(newItem, nodeService.selectedNode!);
@@ -112,15 +114,13 @@ class _ToolbarState extends State<Toolbar> {
       StoryServiceProvider storyService, NodeServiceProvider nodeService) {
     StoryItem itemToUpdate = storyService.getItem(nodeService.selectedNode!.id);
     var saveText = itemToUpdate.text,
-        saveEnd = itemToUpdate.end,
-        saveDelay = itemToUpdate.minutesToWait,
-        saveIsUser = itemToUpdate.isUser;
+        saveEnd = itemToUpdate.nodeType,
+        saveDelay = itemToUpdate.minutesToWait;
 
     storyService.updateNode(
       textController.text,
-      endTypeSelected!,
+      endTypeSelected,
       minutesDelayController.text,
-      isUserSpeaking,
       nodeService.selectedNode!
     );
 
@@ -129,7 +129,7 @@ class _ToolbarState extends State<Toolbar> {
     } catch (error) {
       addError(error.toString());
       storyService.updateNode(saveText, saveEnd.name, saveDelay.toString(),
-          saveIsUser, nodeService.selectedNode!);
+          nodeService.selectedNode!);
     }
     nodeService.clear();
   }
@@ -177,12 +177,6 @@ class _ToolbarState extends State<Toolbar> {
     } catch (error) {
       addError(error.toString());
     }
-  }
-
-  void isUserSpeakingChange(bool? isSpeaking) {
-    setState(() {
-      isUserSpeaking = isSpeaking ?? false;
-    });
   }
 
   void goToNode(StoryItem item, StoryServiceProvider storyServiceProvider) {
@@ -288,7 +282,7 @@ class _ToolbarState extends State<Toolbar> {
                                                     items: dropdownItems,
                                                     focusColor:
                                                         Colors.transparent,
-                                                    onChanged: onEndTypeSelect,
+                                                    onChanged: onNodeTypeSelect,
                                                     value: endTypeSelected),
                                               ),
                                             ],
@@ -311,27 +305,6 @@ class _ToolbarState extends State<Toolbar> {
                                                   minutesDelayController,
                                               maxLines: 1,
                                             ),
-                                          ),
-                                          Column(
-                                            children: [
-                                              Container(
-                                                  width: Toolbar
-                                                      .secondaryInputWidth,
-                                                  margin:
-                                                      const EdgeInsets.all(5),
-                                                  child: CheckboxListTile(
-                                                    title: const Text(
-                                                      "Choice",
-                                                      style: TextStyle(
-                                                        color:
-                                                            Toolbar.inputColor,
-                                                      ),
-                                                    ),
-                                                    value: isUserSpeaking,
-                                                    onChanged:
-                                                        isUserSpeakingChange,
-                                                  )),
-                                            ],
                                           ),
                                         ],
                                       ),

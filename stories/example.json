@@ -3,7 +3,7 @@
       {
     "id": "start",
     "text": "Bienvenue sur cette histoire d'example",
-    "end": "not",
+    "node_type": "text",
     "minutes_to_wait": "0",
     "is_user": "false",
     "conditional_activation": {
@@ -16,7 +16,7 @@
 ,  {
     "id": "2f1e0b7b-5dda-4b5f-a3ee-a744563eb9af",
     "text": "Nous essayons ici les différentes fonctionnalités. Vers quelle fin veux-tu aller ?",
-    "end": "not",
+    "node_type": "text",
     "minutes_to_wait": "0",
     "is_user": "false",
     "conditional_activation": {
@@ -29,7 +29,7 @@
 ,  {
     "id": "659ce6ef-e818-4301-8c6f-87cb66795ae3",
     "text": "la fin heureuse",
-    "end": "not",
+    "node_type": "choice",
     "minutes_to_wait": "0",
     "is_user": "true",
     "conditional_activation": {
@@ -42,7 +42,7 @@
 ,  {
     "id": "4b143c9b-1d29-45ac-95a9-058b63982dab",
     "text": "la fin malheureuse",
-    "end": "not",
+    "node_type": "choice",
     "minutes_to_wait": "0",
     "is_user": "true",
     "conditional_activation": {
@@ -55,7 +55,7 @@
 ,  {
     "id": "73696f50-4db7-457c-9c4f-bdcf60261e84",
     "text": "perdu",
-    "end": "bad",
+    "node_type": "bad",
     "minutes_to_wait": "0",
     "is_user": "false",
     "conditional_activation": {
@@ -68,7 +68,7 @@
 ,  {
     "id": "977edcef-2589-4ce3-8303-af2020b60996",
     "text": "un dialogue avec un délai",
-    "end": "not",
+    "node_type": "choice",
     "minutes_to_wait": "0",
     "is_user": "true",
     "conditional_activation": {
@@ -81,7 +81,7 @@
 ,  {
     "id": "e37c9b1e-3c25-4731-83a1-f58a438f4f39",
     "text": "gagné",
-    "end": "good",
+    "node_type": "good",
     "minutes_to_wait": "0",
     "is_user": "false",
     "conditional_activation": {
@@ -94,7 +94,7 @@
 ,  {
     "id": "7632ad5e-e7b4-44ef-bc36-74f7770ddc0b",
     "text": "très bien, tu devrais voir ça après 10 minutes (du jeu)",
-    "end": "not",
+    "node_type": "text",
     "minutes_to_wait": "10",
     "is_user": "false",
     "conditional_activation": {
@@ -107,7 +107,7 @@
 ,  {
     "id": "f009a6f9-421b-4fa4-9a4c-781d78463ba5",
     "text": "et ça après 20 minutes",
-    "end": "not",
+    "node_type": "text",
     "minutes_to_wait": "20",
     "is_user": "false",
     "conditional_activation": {
@@ -120,7 +120,7 @@
 ,  {
     "id": "dd46e6a3-2908-4a5b-990c-81b6f89c9152",
     "text": "On peut continuer",
-    "end": "not",
+    "node_type": "text",
     "minutes_to_wait": "0",
     "is_user": "false",
     "conditional_activation": {
@@ -133,7 +133,7 @@
 ,  {
     "id": "4a22a2f8-1766-4d3c-a77c-745a6b6b3e23",
     "text": "Chemin alternatif",
-    "end": "not",
+    "node_type": "choice",
     "minutes_to_wait": "0",
     "is_user": "true",
     "conditional_activation": {
@@ -146,7 +146,7 @@
 ,  {
     "id": "b3ae1452-35c3-48cf-b1db-a111ad1465d0",
     "text": "Je peux manger ?",
-    "end": "not",
+    "node_type": "text",
     "minutes_to_wait": "0",
     "is_user": "false",
     "conditional_activation": {
@@ -159,7 +159,7 @@
 ,  {
     "id": "1df9c4d0-d70d-4eac-a810-ddacf5c00483",
     "text": "Oui",
-    "end": "not",
+    "node_type": "choice",
     "minutes_to_wait": "0",
     "is_user": "true",
     "conditional_activation": {
@@ -172,7 +172,7 @@
 ,  {
     "id": "167d661f-b91d-4750-afa6-3a83dfab6b0f",
     "text": "Non",
-    "end": "not",
+    "node_type": "choice",
     "minutes_to_wait": "0",
     "is_user": "true",
     "conditional_activation": {
@@ -185,7 +185,7 @@
 ,  {
     "id": "a0848e19-53e0-433a-83aa-3b94b6305bfa",
     "text": "Je suis bloqué dans un trou",
-    "end": "not",
+    "node_type": "text",
     "minutes_to_wait": "0",
     "is_user": "false",
     "conditional_activation": {
@@ -198,7 +198,7 @@
 ,  {
     "id": "15a99e1d-7849-4e90-b20c-cb9c3b1f3bcc",
     "text": "Essaye de sortir",
-    "end": "not",
+    "node_type": "choice",
     "minutes_to_wait": "0",
     "is_user": "true",
     "conditional_activation": {
@@ -211,7 +211,7 @@
 ,  {
     "id": "2231d31f-eb78-445f-90e5-09ddb0d59e04",
     "text": "il va falloir attendre de l'aide",
-    "end": "not",
+    "node_type": "choice",
     "minutes_to_wait": "0",
     "is_user": "true",
     "conditional_activation": {
@@ -224,7 +224,7 @@
 ,  {
     "id": "0ef00ace-093a-498a-b38e-5d93aba9fd26",
     "text": "Je suis sorti, merci",
-    "end": "not",
+    "node_type": "text",
     "minutes_to_wait": "0",
     "is_user": "false",
     "conditional_activation": {
@@ -237,7 +237,7 @@
 ,  {
     "id": "14fa5dbf-5f7b-443b-84f4-088d384ae8b6",
     "text": "il est partit",
-    "end": "good",
+    "node_type": "good",
     "minutes_to_wait": "0",
     "is_user": "false",
     "conditional_activation": {
@@ -250,7 +250,7 @@
 ,  {
     "id": "4cf29ec2-71f3-4b0a-8b97-8aa4b3bf7831",
     "text": "il est mort",
-    "end": "bad",
+    "node_type": "bad",
     "minutes_to_wait": "10",
     "is_user": "false",
     "conditional_activation": {

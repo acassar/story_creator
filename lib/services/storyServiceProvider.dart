@@ -11,7 +11,7 @@ import 'package:uuid/uuid.dart';
 
 class StoryServiceProvider extends ChangeNotifier {
   StoryItem defaultFileContent = StoryItem("start", "Story start",
-      end: EndType.not, isUser: false, minutesToWait: 0, conditionalActivation: ConditionalActivation(activateKey: "", activateValue: "", activatedByKey: "", activatedByValue: ""));
+      nodeType: NodeType.text, minutesToWait: 0, conditionalActivation: ConditionalActivation(activateKey: "", activateValue: "", activatedByKey: "", activatedByValue: ""));
   Graph graph = Graph()..isTree = true;
   TransformationController? _transformationController;
   late Matrix4 transformationControllerDefaultValue;
@@ -115,12 +115,11 @@ class StoryServiceProvider extends ChangeNotifier {
   }
 
   updateNode(String text, String endTypeSelected, String minutesDelay,
-      bool isUser, StoryItem selectedItem) {
+      StoryItem selectedItem) {
     StoryItem item = currentStory!.items
         .firstWhere((element) => element.id == selectedItem.id);
     item.text = text;
-    item.end = StoryItem.stringToEndType(endTypeSelected);
-    item.isUser = isUser;
+    item.nodeType = StoryItem.stringToNodeType(endTypeSelected);
     item.minutesToWait = int.parse(minutesDelay);
     notifyListeners();
   }

@@ -29,16 +29,15 @@ class Story {
     return texts;
   }
 
-  EndType addEnd(dynamic end) {
-    return StoryItem.stringToEndType(end);
+  NodeType addEnd(dynamic end) {
+    return StoryItem.stringToNodeType(end);
   }
 
   StoryItem convertToStoryItem(Map<String, dynamic> data) {
     StoryItem item = StoryItem(
       data["id"],
       data["text"],
-      end: addEnd(data["end"]),
-      isUser: data["is_user"] == "true" ? true : false,
+      nodeType: addEnd(data["node_type"]),
       minutesToWait: int.parse(data["minutes_to_wait"]),
       conditionalActivation: ConditionalActivation(
           activatedByKey: data["conditional_activation"]["activated_by_key"],

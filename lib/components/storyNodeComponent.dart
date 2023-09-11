@@ -17,15 +17,15 @@ class StoryNodeComponent extends StatelessWidget {
       required this.linkToSelected});
 
   getColor() {
-    switch (item.end) {
-      case EndType.bad:
+    switch (item.nodeType) {
+      case NodeType.bad:
         return Colors.red.withOpacity(0.8);
-      case EndType.good:
+      case NodeType.good:
         return Colors.green.withOpacity(0.8);
-      case EndType.not:
-        return item.isUser
-            ? Colors.deepOrange.withOpacity(0.5)
-            : Colors.blue.withOpacity(0.5);
+      case NodeType.text:
+        return Colors.blue.withOpacity(0.5);
+      case NodeType.choice:
+        return Colors.deepOrange.withOpacity(0.5);
       default:
         return Colors.grey;
     }
@@ -69,87 +69,90 @@ class StoryNodeComponent extends StatelessWidget {
                       fontWeight: FontWeight.bold),
                 ),
               ),
-              if(item.minutesToWait > 0)
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(5),
-                      color: Colors.black.withOpacity(0.4),
-                      child: Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        alignment: WrapAlignment.center,
-                        spacing: 10,
-                        children: [
-                          const Icon(
-                            Icons.access_time_rounded,
-                            color: Colors.white,
-                          ),
-                          Text(
-                            "Delay: ${item.minutesToWait}",
-                            style: const TextStyle(color: Colors.white, fontSize: 25),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+              if (item.minutesToWait > 0)
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(5),
+                        color: Colors.black.withOpacity(0.4),
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          alignment: WrapAlignment.center,
+                          spacing: 10,
+                          children: [
+                            const Icon(
+                              Icons.access_time_rounded,
+                              color: Colors.white,
+                            ),
+                            Text(
+                              "Delay: ${item.minutesToWait}",
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 25),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              if(item.hasCondition())
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(5),
-                      color: Colors.pink,
-                      child: Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        alignment: WrapAlignment.center,
-                        spacing: 10,
-                        children: [
-                          const Icon(
-                            Icons.auto_awesome_sharp,
-                            color: Colors.white,
-                          ),
-                          Text(
-                            "Can be chosen if : ${item.conditionalActivation.activatedByKey} = ${item.conditionalActivation.activatedByValue}",
-                            style: const TextStyle(color: Colors.white, fontSize: 25),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+                  ],
+                ),
+              if (item.hasCondition())
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(5),
+                        color: Colors.pink,
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          alignment: WrapAlignment.center,
+                          spacing: 10,
+                          children: [
+                            const Icon(
+                              Icons.auto_awesome_sharp,
+                              color: Colors.white,
+                            ),
+                            Text(
+                              "Can be chosen if : ${item.conditionalActivation.activatedByKey} = ${item.conditionalActivation.activatedByValue}",
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 25),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              if(item.hasActivation())
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(5),
-                      color: Colors.purple,
-                      child: Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        alignment: WrapAlignment.center,
-                        spacing: 10,
-                        children: [
-                          const Icon(
-                            Icons.auto_awesome_sharp,
-                            color: Colors.white,
-                          ),
-                          Text(
-                            "${item.conditionalActivation.activateKey} = ${item.conditionalActivation.activateValue}",
-                            style: const TextStyle(color: Colors.white, fontSize: 25),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+                  ],
+                ),
+              if (item.hasActivation())
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(5),
+                        color: Colors.purple,
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          alignment: WrapAlignment.center,
+                          spacing: 10,
+                          children: [
+                            const Icon(
+                              Icons.auto_awesome_sharp,
+                              color: Colors.white,
+                            ),
+                            Text(
+                              "${item.conditionalActivation.activateKey} = ${item.conditionalActivation.activateValue}",
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 25),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              )
+                  ],
+                )
             ],
           ),
         ),
