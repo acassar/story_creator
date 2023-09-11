@@ -90,7 +90,7 @@ class StoryItem {
     return """
   {
     "id": "$id",
-    "text": "$text",
+    "text": "${text.replaceAll("\n", " ")}",
     "node_type": "${nodeTypeToString()}",
     "minutes_to_wait": "$minutesToWait",
     "conditional_activation": {
