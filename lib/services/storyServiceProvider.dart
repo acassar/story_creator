@@ -10,7 +10,6 @@ import 'package:story_creator/models/storyItem.dart';
 import 'package:uuid/uuid.dart';
 
 class StoryServiceProvider extends ChangeNotifier {
-  String folderName = "example";
   StoryItem defaultFileContent = StoryItem("start", "Story start",
       end: EndType.not, isUser: false, minutesToWait: 0, conditionalActivation: ConditionalActivation(activateKey: "", activateValue: "", activatedByKey: "", activatedByValue: ""));
   Graph graph = Graph()..isTree = true;
@@ -44,12 +43,12 @@ class StoryServiceProvider extends ChangeNotifier {
   Story? currentStory;
 
   String getLastSave(String fileName) {
-    String path = "stories/$folderName/$fileName.json";
+    String path = "stories/$fileName.json";
     return File(path).lastModifiedSync().toIso8601String();
   }
 
   void saveStory(String fileName) {
-    String path = "stories/$folderName/$fileName.json";
+    String path = "stories/$fileName.json";
     writeFile(currentStory!.items.map((element) => element.toJson()).join(","),
         currentStory!.edges.map((element) => element.toJson()).join(","), path);
     notifyListeners();
@@ -69,7 +68,7 @@ class StoryServiceProvider extends ChangeNotifier {
   }
 
   void loadStory(String name) async {
-    Map<String, dynamic> storyMap = await _readFile(folderName, name);
+    Map<String, dynamic> storyMap = await _readFile(name);
     Story story = Story(name, storyMap);
     currentStory = story;
     graph = Graph()..isTree = true;
@@ -80,9 +79,8 @@ class StoryServiceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Map<String, dynamic>> _readFile(
-      String folderName, String fileName) async {
-    String path = "stories/$folderName/$fileName.json";
+  Future<Map<String, dynamic>> _readFile( String fileName) async {
+    String path = "stories/$fileName.json";
 
     bool exist = await File(path).exists();
     File file = File(path);

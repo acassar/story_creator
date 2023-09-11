@@ -221,6 +221,45 @@
       "activate_value": ""
     }
   }
+,  {
+    "id": "0ef00ace-093a-498a-b38e-5d93aba9fd26",
+    "text": "Je suis sorti, merci",
+    "end": "not",
+    "minutes_to_wait": "0",
+    "is_user": "false",
+    "conditional_activation": {
+      "activated_by_key": "",
+      "activated_by_value": "",
+      "activate_key": "",
+      "activate_value": ""
+    }
+  }
+,  {
+    "id": "14fa5dbf-5f7b-443b-84f4-088d384ae8b6",
+    "text": "il est partit",
+    "end": "good",
+    "minutes_to_wait": "0",
+    "is_user": "false",
+    "conditional_activation": {
+      "activated_by_key": "",
+      "activated_by_value": "",
+      "activate_key": "",
+      "activate_value": ""
+    }
+  }
+,  {
+    "id": "4cf29ec2-71f3-4b0a-8b97-8aa4b3bf7831",
+    "text": "il est mort",
+    "end": "bad",
+    "minutes_to_wait": "10",
+    "is_user": "false",
+    "conditional_activation": {
+      "activated_by_key": "",
+      "activated_by_value": "",
+      "activate_key": "",
+      "activate_value": ""
+    }
+  }
 
   ],
   "edges": [
@@ -295,6 +334,18 @@
 ,  {
     "from": "a0848e19-53e0-433a-83aa-3b94b6305bfa",
     "to": "2231d31f-eb78-445f-90e5-09ddb0d59e04"
+  }
+,  {
+    "from": "15a99e1d-7849-4e90-b20c-cb9c3b1f3bcc",
+    "to": "0ef00ace-093a-498a-b38e-5d93aba9fd26"
+  }
+,  {
+    "from": "0ef00ace-093a-498a-b38e-5d93aba9fd26",
+    "to": "14fa5dbf-5f7b-443b-84f4-088d384ae8b6"
+  }
+,  {
+    "from": "2231d31f-eb78-445f-90e5-09ddb0d59e04",
+    "to": "4cf29ec2-71f3-4b0a-8b97-8aa4b3bf7831"
   }
 
   ]
