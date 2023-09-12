@@ -75,7 +75,7 @@ class NoNodeAfterEnd extends ValidationRules {
         (children.isNotEmpty &&
             (item.nodeType == NodeType.good ||
                 item.nodeType == NodeType.bad))) {
-      throw ErrorDescription("An end can't have children");
+      throw ErrorDescription(description);
     }
   }
 }
