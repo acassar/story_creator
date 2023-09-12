@@ -9,6 +9,7 @@ import 'package:story_creator/models/story.dart';
 import 'package:story_creator/models/storyItem.dart';
 import 'package:story_creator/services/nodeServiceProvider.dart';
 import 'package:story_creator/services/storyServiceProvider.dart';
+import 'package:story_creator/services/validationService.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:graphview/GraphView.dart';
@@ -47,7 +48,25 @@ class _StoryCreatorState extends State<StoryCreator> {
   }
 
   longClickedNode(StoryItem item) {
-    Provider.of<NodeServiceProvider>(context, listen: false).setLongClickedNode(item);
+    Provider.of<NodeServiceProvider>(context, listen: false)
+        .setLongClickedNode(item);
+  }
+
+  updateNodeErrors() {
+    StoryServiceProvider storyServiceProvider =
+        Provider.of<StoryServiceProvider>(context);
+    NodeServiceProvider nodeServiceProvider =
+        Provider.of<NodeServiceProvider>(context, listen: false);
+    ValidationService validationService =
+        ValidationService(storyServiceProvider, nodeServiceProvider);
+
+    for (var item in storyServiceProvider.currentStory!.items) {
+      try {
+        validationService.validate(item);
+      } catch (error) {
+        item.nodeInError = error.toString();
+      }
+    }
   }
 
   @override
@@ -65,7 +84,8 @@ class _StoryCreatorState extends State<StoryCreator> {
           ),
           Flexible(
             child: InteractiveViewer(
-                transformationController: storyService.initTransformationController(),
+                transformationController:
+                    storyService.initTransformationController(),
                 constrained: false,
                 boundaryMargin: const EdgeInsets.all(double.infinity),
                 minScale: 0.01,
@@ -74,6 +94,7 @@ class _StoryCreatorState extends State<StoryCreator> {
                   children: [
                     Consumer<NodeServiceProvider>(
                         builder: (context, nodeService, child) {
+                      updateNodeErrors();
                       return GraphView(
                         animated: true,
                         graph: storyService.graph,

@@ -7,11 +7,19 @@ import 'package:story_creator/components/storyNodeComponent.dart';
 import 'package:story_creator/models/story.dart';
 import 'package:story_creator/models/storyEdge.dart';
 import 'package:story_creator/models/storyItem.dart';
+import 'package:story_creator/services/nodeServiceProvider.dart';
+import 'package:story_creator/services/validationService.dart';
 import 'package:uuid/uuid.dart';
 
 class StoryServiceProvider extends ChangeNotifier {
   StoryItem defaultFileContent = StoryItem("start", "Story start",
-      nodeType: NodeType.text, minutesToWait: 0, conditionalActivation: ConditionalActivation(activateKey: "", activateValue: "", activatedByKey: "", activatedByValue: ""));
+      nodeType: NodeType.text,
+      minutesToWait: 0,
+      conditionalActivation: ConditionalActivation(
+          activateKey: "",
+          activateValue: "",
+          activatedByKey: "",
+          activatedByValue: ""));
   Graph graph = Graph()..isTree = true;
   TransformationController? _transformationController;
   late Matrix4 transformationControllerDefaultValue;
@@ -79,7 +87,7 @@ class StoryServiceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Map<String, dynamic>> _readFile( String fileName) async {
+  Future<Map<String, dynamic>> _readFile(String fileName) async {
     String path = "stories/$fileName.json";
 
     bool exist = await File(path).exists();
@@ -124,7 +132,8 @@ class StoryServiceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setConditionalActivation(StoryItem item, ConditionalActivation conditionalActivation) {
+  void setConditionalActivation(
+      StoryItem item, ConditionalActivation conditionalActivation) {
     item.conditionalActivation = conditionalActivation;
     notifyListeners();
   }

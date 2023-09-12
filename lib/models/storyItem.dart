@@ -23,6 +23,7 @@ class StoryItem {
   NodeType nodeType;
   int minutesToWait;
   ConditionalActivation conditionalActivation;
+  String? nodeInError;
 
   StoryItem(
     this.id,
