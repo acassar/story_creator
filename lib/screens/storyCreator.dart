@@ -63,6 +63,7 @@ class _StoryCreatorState extends State<StoryCreator> {
     for (var item in storyServiceProvider.currentStory!.items) {
       try {
         validationService.validate(item);
+        item.nodeInError = null;
       } catch (error) {
         item.nodeInError = error.toString();
       }
