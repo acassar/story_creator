@@ -88,13 +88,17 @@ class _ToolbarState extends State<Toolbar> {
     });
   }
 
+  String formatContent(String content) {
+    return content.split("\n").map((e) => e.trim()).join(" ");
+  }
+
   void createNode(
       StoryServiceProvider storyService, NodeServiceProvider nodeService) {
     late StoryItem newItem;
     try {
       newItem = StoryItem.createFromForm(
         id: storyService.getNewId(),
-        text: textController.text,
+        text: formatContent(textController.text),
         nodeType: nodeTypeSelected,
         minutesDelay: minutesDelayController.text,
       );
@@ -109,7 +113,7 @@ class _ToolbarState extends State<Toolbar> {
   void updateNode(
       StoryServiceProvider storyService, NodeServiceProvider nodeService) {
     try {
-      storyService.updateNode(textController.text, nodeTypeSelected,
+      storyService.updateNode(formatContent(textController.text), nodeTypeSelected,
           minutesDelayController.text, nodeService.selectedNode!);
     } catch (error) {
       addError(error.toString());
