@@ -190,7 +190,7 @@ class StoryNodeComponent extends StatelessWidget {
                                     color: Colors.white,
                                   ),
                                   Text(
-                                    "Node in error ${item.nodeInError}",
+                                    "${item.nodeInError}",
                                     style: const TextStyle(
                                         color: Colors.white, fontSize: 25),
                                     textAlign: TextAlign.center,
