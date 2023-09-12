@@ -59,7 +59,6 @@ class _ToolbarState extends State<Toolbar> {
   ];
   String nodeTypeSelected = "text";
   EdgeInsets cardPad = const EdgeInsets.all(10);
-  late ValidationService validationService;
   StoryItem? selectedNode;
 
   onNodeTypeSelect(dynamic value) {
@@ -73,11 +72,6 @@ class _ToolbarState extends State<Toolbar> {
     super.initState();
     fileNameController.text = widget.defaultFileName;
     onNodeTypeSelect("text");
-    WidgetsBinding.instance.addPostFrameCallback((_) => validationService =
-        ValidationService(
-            Provider.of<StoryServiceProvider>(context, listen: false),
-            Provider.of<NodeServiceProvider>(context, listen: false)));
-    Provider.of<StoryServiceProvider>(context, listen: false);
   }
 
   addError(String error) async {
@@ -96,16 +90,16 @@ class _ToolbarState extends State<Toolbar> {
 
   void createNode(
       StoryServiceProvider storyService, NodeServiceProvider nodeService) {
-    StoryItem newItem = StoryItem.createFromForm(
-      id: storyService.getNewId(),
-      text: textController.text,
-      nodeType: nodeTypeSelected,
-      minutesDelay: minutesDelayController.text,
-    );
-    storyService.createNode(newItem, nodeService.selectedNode!);
-    nodeService.selectNode(null);
+    late StoryItem newItem;
     try {
-      validationService.validate(newItem);
+      newItem = StoryItem.createFromForm(
+        id: storyService.getNewId(),
+        text: textController.text,
+        nodeType: nodeTypeSelected,
+        minutesDelay: minutesDelayController.text,
+      );
+      storyService.createNode(newItem, nodeService.selectedNode!);
+      nodeService.selectNode(null);
     } catch (error) {
       addError(error.toString());
       storyService.removeNode(newItem);
@@ -114,20 +108,11 @@ class _ToolbarState extends State<Toolbar> {
 
   void updateNode(
       StoryServiceProvider storyService, NodeServiceProvider nodeService) {
-    StoryItem itemToUpdate = storyService.getItem(nodeService.selectedNode!.id);
-    var saveText = itemToUpdate.text,
-        saveNodeType = itemToUpdate.nodeType,
-        saveDelay = itemToUpdate.minutesToWait;
-
-    storyService.updateNode(textController.text, nodeTypeSelected,
-        minutesDelayController.text, nodeService.selectedNode!);
-
     try {
-      validationService.validate(nodeService.selectedNode!);
+      storyService.updateNode(textController.text, nodeTypeSelected,
+          minutesDelayController.text, nodeService.selectedNode!);
     } catch (error) {
       addError(error.toString());
-      storyService.updateNode(saveText, saveNodeType.name, saveDelay.toString(),
-          nodeService.selectedNode!);
     }
     nodeService.clear();
   }
@@ -136,14 +121,11 @@ class _ToolbarState extends State<Toolbar> {
       NodeServiceProvider nodeServiceProvider) {
     if (nodeServiceProvider.isLinkingTo &&
         nodeServiceProvider.linkToSelection != null) {
-      storyServiceProvider.addLink(nodeServiceProvider.selectedNode!,
-          nodeServiceProvider.linkToSelection!);
       try {
-        validationService.validate(nodeServiceProvider.selectedNode!);
+        storyServiceProvider.addLink(nodeServiceProvider.selectedNode!,
+            nodeServiceProvider.linkToSelection!);
       } catch (error) {
         addError(error.toString());
-        storyServiceProvider.removeLink(nodeServiceProvider.selectedNode!,
-            nodeServiceProvider.linkToSelection!);
       }
       nodeServiceProvider.clear();
     } else {
