@@ -37,7 +37,7 @@ class SiblingValidation extends ValidationRules {
       List<StoryEdge> from = storyService.getEdgesFromSourceToOther(parent);
       ValidationService.fillChildren(siblings, from, storyService);
       if (siblings.length > 1) {
-        if (item.nodeType != NodeType.choice ) {
+        if (item.nodeType != NodeType.choice) {
           throw ErrorDescription(
               "You can't add a character text when there is other texts at the same level");
         } else {
@@ -69,9 +69,33 @@ class NoNodeAfterEnd extends ValidationRules {
 
   @override
   void validate() {
-    if (parents.any((element) => element.nodeType == NodeType.good || element.nodeType == NodeType.bad) ||
-        (children.isNotEmpty && (item.nodeType == NodeType.good || item.nodeType == NodeType.bad))) {
+    if (parents.any((element) =>
+            element.nodeType == NodeType.good ||
+            element.nodeType == NodeType.bad) ||
+        (children.isNotEmpty &&
+            (item.nodeType == NodeType.good ||
+                item.nodeType == NodeType.bad))) {
       throw ErrorDescription("An end can't have children");
+    }
+  }
+}
+
+class MustFinishByEnd extends ValidationRules {
+  final List<StoryItem> children;
+  MustFinishByEnd(
+      {required super.storyService,
+      required super.item,
+      required this.children})
+      : super(
+            title: "Must finish by end",
+            description:
+                "Any path must terminate by an end, either good or bad");
+
+  @override
+  void validate() {
+    if ((item.nodeType != NodeType.bad && item.nodeType != NodeType.good) &&
+        children.isEmpty) {
+      throw ErrorDescription(description);
     }
   }
 }

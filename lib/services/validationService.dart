@@ -18,7 +18,13 @@ class ValidationService {
     List<StoryItem> parentItems = [];
     List<ValidationRules> rules = [
       SiblingValidation(storyService, parentItems, item: item),
-      NoNodeAfterEnd(storyService: storyService, item: item, parents: parentItems, children: childrenItems),
+      NoNodeAfterEnd(
+          storyService: storyService,
+          item: item,
+          parents: parentItems,
+          children: childrenItems),
+      MustFinishByEnd(
+          storyService: storyService, item: item, children: childrenItems),
     ];
 
     fillChildren(childrenItems, from, storyService);
