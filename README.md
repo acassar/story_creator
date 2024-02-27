@@ -46,7 +46,10 @@ All your nodes can be connected to each other with links.
 - select the child you want to delete the edge to. It should turn yellow
 - Submit by pressing the same button.
 
-        You can only remove direct child connections. Also, if the child has only one connection (that is the parent from which you want to remove the edge), it will be disconnected fron the tree. You will find the disconnected tree at the top, near the first node (there is a button "Go to first node" that will teleport you to it)
+
+>[!IMPORTANT]
+>
+>You can only remove direct child connections. Also, if the child has only one connection (that is the parent from which you want to remove the edge), it will be disconnected fron the tree. You will find the disconnected tree at the top, near the first node (there is a button "Go to first node" that will teleport you to it)
 
 
 ### Files
